@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_reservation_list_item_date"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/text_sub_color"
+        app:layout_constraintBottom_toBottomOf="@id/tv_reservation_list_item_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_reservation_list_item_title"
+        tools:text="24.01.02" />
+
+    <TextView
+        android:id="@+id/tv_reservation_list_item_title"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/text_color"
+        android:textSize="17dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tv_reservation_list_item_theater"
+        app:layout_constraintStart_toEndOf="@id/tv_reservation_list_item_date"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpUsage"
+        tools:text="서울의 봄" />
+
+    <TextView
+        android:id="@+id/tv_reservation_list_item_theater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        style="@style/TextStyle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_reservation_list_item_date"
+        app:layout_constraintTop_toBottomOf="@id/tv_reservation_list_item_title"
+        tools:text="CGV구로" />
+
+    <TextView
+        android:id="@+id/tv_reservation_list_item_movie"
+        android:layout_width="wrap_content"
+        style="@style/TextStyle"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_color"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_reservation_list_item_title"
+        app:layout_constraintStart_toEndOf="@id/tv_reservation_list_item_title"
+        app:layout_constraintTop_toTopOf="@id/tv_reservation_list_item_title"
+        tools:text="4DX" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/tv_reservation_list_item_delete"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content" />-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

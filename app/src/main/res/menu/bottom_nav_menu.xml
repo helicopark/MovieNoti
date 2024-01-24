@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_cgv"
+        android:title="@string/cgv" />
+
+    <item
+        android:id="@+id/navigation_megabox"
+        android:title="@string/megabox" />
+
+    <item
+        android:id="@+id/navigation_lotte_cinema"
+        android:title="@string/lotte_cinema" />
+
+    <item
+        android:id="@+id/navigation_reservation"
+        android:title="@string/reservation" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:title="@string/settings" />
+</menu>

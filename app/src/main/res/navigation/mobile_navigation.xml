@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_cgv">
+
+    <fragment
+        android:id="@+id/navigation_reservation"
+        android:name="kr.co.helicopark.movienoti.presentation.reservation.ReservationFragment"
+        tools:layout="@layout/fragment_reservation" />
+
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_chart"-->
+<!--        android:name="kr.co.tsp.accountbook.chart.ChartFragment"-->
+<!--        tools:layout="@layout/fragment_chart">-->
+
+<!--        <argument-->
+<!--            android:name="category"-->
+<!--            android:defaultValue=""-->
+<!--            app:argType="string" />-->
+
+<!--        <action-->
+<!--            android:id="@+id/action_navigation_chart_to_navigation_list"-->
+<!--            app:destination="@id/navigation_list"-->
+<!--            app:launchSingleTop="true"-->
+<!--            app:popUpTo="@id/mobile_navigation"-->
+<!--            app:popUpToInclusive="true" />-->
+<!--    </fragment>-->
+
+    <fragment
+        android:id="@+id/navigation_cgv"
+        android:name="kr.co.helicopark.movienoti.presentation.cgv.CgvFragment"
+        tools:layout="@layout/fragment_cgv" />
+
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_calendar"-->
+<!--        android:name="kr.co.tsp.accountbook.calendar.CalendarFragment"-->
+<!--        tools:layout="@layout/fragment_calendar" />-->
+
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_list"-->
+<!--        android:name="kr.co.tsp.accountbook.list.ListFragment"-->
+<!--        tools:layout="@layout/fragment_cgv">-->
+
+<!--        <argument-->
+<!--            android:name="category"-->
+<!--            android:defaultValue=""-->
+<!--            app:argType="string" />-->
+<!--    </fragment>-->
+</navigation>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/text_color</color>
+    <color name="colorPrimaryDark">@color/background</color>
+    <color name="colorAccent">@color/text_color</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="cgv_main_color">#fb4358</color>
+    <color name="cgv_sub_color">#ff7356</color>
+
+    <color name="background">#ffffff</color>
+    <color name="sub_background">#f2f2f2</color>
+
+    <color name="text_color">#333333</color>
+    <color name="text_sub_color">#666666</color>
+
+    <color name="navigation_selected_color">#333333</color>
+    <color name="navigation_unselected_color">#59333333</color>
+
+    <color name="bottom_sheet_border_color">#dddddd</color>
+    <color name="bottom_sheet_unselected_color">#eeeeee</color>
+
+    <color name="progress_background">#33333333</color>
+</resources>

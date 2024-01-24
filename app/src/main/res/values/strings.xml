@@ -1,0 +1,81 @@
+<resources>
+    <string name="app_name">MovieNoti</string>
+
+    <!--MainActivity-->
+    <string name="cgv">CGV</string>
+    <string name="megabox">Megabox</string>
+    <string name="lotte_cinema">LOTTE Cinema</string>
+    <string name="reservation">예약목록</string>
+    <string name="settings">설정</string>
+
+    <!--CgvFragment-->
+    <string name="format_reservation_rate">예매율%s%%</string>
+    <string name="format_released_date"><![CDATA[<B>%s 개봉 <I>%s</I></B>]]></string>
+
+    <!--ListFragment-->
+    <string name="set_notification">알림 설정</string>
+
+    <string name="reservation_rate_order">· 예매율순</string>
+    <string name="abc_order">· 가나다순</string>
+
+    <string name="current_movie_list">현재상영작보기</string>
+
+    <!--Notification-->
+
+    <!--AlertDialog-->
+    <string name="dialog_default_title">알림</string>
+    <string name="dialog_ok">확인</string>
+    <string name="dialog_cancel">취소</string>
+    <string name="dialog_setting">설정 화면</string>
+    <string name="dialog_post_notification_message">영화 오픈은 알림을 통해서 알려드려요. 알림을 받기 위해서 알림 권한이 필요해요.</string>
+    <string name="dialog_reject_post_notification_message">영화 오픈 알림을 받기 원하시면 설정화면에서 알림 권한을 허용해주세요.</string>
+
+    <string name="dialog_movie_info_title">%s 영화관을 선택했어요. 영화 종류를 선택해주세요.</string>
+
+    <!--    Reservation List-->
+    <string name="reservation_delete">삭제</string>
+
+
+    <!--TheaterBottomSheetDialogFragment-->
+    <string name="bottom_sheet_format_title"><![CDATA[<b>%s</b>]]> 영화를 선택했어요. 영화관을 선택해주세요.</string>
+
+    <string name="seoul">서울</string>
+    <string name="gyeonggi">경기</string>
+    <string name="inchon">인천</string>
+    <string name="gangwon">강원</string>
+    <string name="daejeon_chungcheong">대전/충청</string>
+    <string name="daegu">대구</string>
+    <string name="busan_ulsan">부산/울산</string>
+    <string name="gyeongsang">경상</string>
+    <string name="gwangju_jeolla_jeju">광주/전라/제주</string>
+
+    <string name="GANGNAM">강남</string>
+    <string name="GANGBEYON">강변</string>
+    <string name="GUNDAE">건대</string>
+    <string name="GURO">구로</string>
+    <string name="DAEHACKRO">대학로</string>
+    <string name="DONGDAEMUN">동대문</string>
+    <string name="DEOUNGCHON">등촌</string>
+    <string name="MYEONGDONG">명동</string>
+    <string name="MYEONGDONG_CINE">명동역 시네라이브러리</string>
+    <string name="MIA">미아</string>
+    <string name="BANGHAK">방학</string>
+    <string name="BULGWANG">불광</string>
+    <string name="SANGBONG">상봉</string>
+    <string name="SUNGSIN">성신여대입구</string>
+    <string name="SONGPA">송파</string>
+    <string name="SUYU">수유</string>
+    <string name="SINCHON_ATREON">신촌아트레온</string>
+    <string name="APGUJEONG">압구정</string>
+    <string name="YEOUIDO">여의도</string>
+    <string name="YEONNAM">연남 with 토레타!</string>
+    <string name="YEONGDEUNGPO">영등포</string>
+    <string name="WANGSIMNI">왕십리</string>
+    <string name="YONGSAN">용산</string>
+    <string name="JUNGGYE">중계</string>
+    <string name="CUNHO">천호</string>
+    <string name="CHUNGDAM">청담씨네시티</string>
+    <string name="PICCADILLY">피카디리1958</string>
+    <string name="HAGYE">하계</string>
+    <string name="HONGDAE">홍대</string>
+</resources>
