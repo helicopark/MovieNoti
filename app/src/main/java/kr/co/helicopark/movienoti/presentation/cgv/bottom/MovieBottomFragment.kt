@@ -40,13 +40,15 @@ import kr.co.helicopark.movienoti.MOVIE_INFO
 import kr.co.helicopark.movienoti.R
 import kr.co.helicopark.movienoti.SEOUL_CODE
 import kr.co.helicopark.movienoti.SEOUL_THEATER_LIST
-import kr.co.helicopark.movienoti.domain.model.UiStatus
 import kr.co.helicopark.movienoti.databinding.DialogBottomMovieTheaterBinding
+import kr.co.helicopark.movienoti.domain.model.UiStatus
 import kr.co.helicopark.movienoti.presentation.model.AreaItem
-import kr.co.helicopark.movienoti.presentation.model.TheaterItem
 import kr.co.helicopark.movienoti.presentation.model.PersonalReservationMovieItem
+import kr.co.helicopark.movienoti.presentation.model.TheaterItem
 import org.json.JSONArray
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 @AndroidEntryPoint
 class MovieBottomFragment : BottomSheetDialogFragment() {
@@ -54,7 +56,8 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
     private val viewModel: MovieBottomViewModel by viewModels()
 
     private var date: Long = 0L
-    private var movieName: String = ""
+    private var reservationDate: Long = 0L
+    private var movieTitle: String = ""
     private var movieFormat = ""
     private var areaCode = "01"
     private var theaterCode = ""
@@ -102,15 +105,16 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
                     date = Date().time
 
                     AlertDialog.Builder(requireContext()).apply {
-                        setMessage("name = ${movieName}, info = ${movieFormat}, date = ${date}, theater = ${theaterCode},area = ${areaCode}")
+                        setMessage("name = ${movieTitle}, info = ${movieFormat}, date = ${date}, theater = ${theaterCode},area = ${areaCode}")
                         setPositiveButton("확인", null)
                         show()
                     }
 
                     val adminReservationMovieInfo = hashMapOf(
                         "date" to date,
+                        "reservationDate" to reservationDate,
                         "brand" to "CGV",
-                        "movieName" to movieName,
+                        "movieTitle" to movieTitle,
                         "movieFormat" to movieFormat,
                         "theaterCode" to theaterCode,
                         "areaCode" to areaCode,
@@ -118,7 +122,7 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
                     )
 
                     val personalReservationMovieInfo = hashMapOf(
-                        date.toString() to PersonalReservationMovieItem(date, "CGV", movieName, movieFormat, theaterCode, areaCode)
+                        date.toString() to PersonalReservationMovieItem(date, reservationDate, "CGV", movieTitle, movieFormat, theaterCode, areaCode)
                     )
 
                     viewModel.setAdminReservationMovie(adminReservationMovieInfo)
@@ -142,10 +146,13 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
 
         initAdapterSetting()
 
-        movieName = arguments?.getString("movieName") ?: ""
+        movieTitle = arguments?.getString("movieTitle") ?: ""
+        reservationDate = arguments?.getLong("reservationDate") ?: 0L
+
+        val formattedDate = SimpleDateFormat("yy년 MM월 dd일", Locale.getDefault()).format(reservationDate)
 
         binding.tvBottomTitle.text = Html.fromHtml(
-            String.format(getString(R.string.bottom_sheet_format_title), arguments?.getString("movieName")),
+            String.format(getString(R.string.bottom_sheet_format_title), formattedDate, movieTitle),
             Html.FROM_HTML_MODE_COMPACT
         )
 

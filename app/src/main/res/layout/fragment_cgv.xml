@@ -1,98 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search"
-        android:layout_width="0dp"
-        android:layout_height="?actionBarSize"
-        app:iconifiedByDefault="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:queryHint="검색어를 입력하시오" />
+    <data>
+
+        <variable
+            name="adapter"
+            type="kr.co.helicopark.movienoti.presentation.cgv.CgvAdapter" />
+
+        <variable
+            name="viewmodel"
+            type="kr.co.helicopark.movienoti.presentation.cgv.CgvViewModel" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_list_order"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/sub_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <TextView
-            android:id="@+id/tv_list_reservation_rate_order"
-            style="@style/TextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="8dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="16dp"
-            android:text="@string/reservation_rate_order"
-            android:textSize="13dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search"
+            android:layout_width="0dp"
+            android:layout_height="?actionBarSize"
+            app:iconifiedByDefault="false"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SpUsage" />
+            app:queryHint="검색어를 입력하시오" />
 
-        <TextView
-            android:id="@+id/tv_list_abc_order"
-            style="@style/TextStyle"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_list_order"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingStart="8dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="16dp"
-            android:text="@string/abc_order"
-            android:textSize="13dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_list_reservation_rate_order"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SpUsage" />
+            android:background="@color/sub_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search">
 
-        <TextView
-            android:id="@+id/tv_list_current_movie_list"
-            style="@style/TextStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="@string/current_movie_list"
-            android:textSize="13dp"
-            app:drawableStartCompat="@drawable/selector_check_current_movie_list"
+            <TextView
+                android:id="@+id/tv_list_reservation_rate_order"
+                style="@style/TextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="16dp"
+                android:text="@string/reservation_rate_order"
+                android:textSize="13dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpUsage" />
+
+            <TextView
+                android:id="@+id/tv_list_abc_order"
+                style="@style/TextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="16dp"
+                android:text="@string/abc_order"
+                android:textSize="13dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_list_reservation_rate_order"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpUsage" />
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/tv_list_current_movie_list"-->
+            <!--                style="@style/TextStyle"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:gravity="center"-->
+            <!--                android:padding="8dp"-->
+            <!--                android:text="@string/current_movie_list"-->
+            <!--                android:textSize="13dp"-->
+            <!--                app:drawableStartCompat="@drawable/selector_check_current_movie_list"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                tools:ignore="SpUsage" />-->
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_list"
+            adapter="@{adapter}"
+            submitList="@{viewmodel.cgvMovieList}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:divider="@color/text_sub_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SpUsage" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cl_list_order"
+            tools:listitem="@layout/item_movie_list" />
+
+        <ProgressBar
+            android:id="@+id/progress_cgv"
+            resource="@{viewmodel.cgvMovieList}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cl_list_order" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:divider="@color/text_sub_color"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cl_list_order"
-        tools:listitem="@layout/item_movie_list" />
-    
-    <ProgressBar
-        android:id="@+id/progress_cgv"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cl_list_order"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,225 +1,112 @@
 package kr.co.helicopark.movienoti.presentation.cgv
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.CalendarConstraints.DateValidator
+import com.google.android.material.datepicker.CompositeDateValidator
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.DateValidatorPointForward
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kr.co.helicopark.movienoti.R
-import kr.co.helicopark.movienoti.domain.model.UiStatus
 import kr.co.helicopark.movienoti.databinding.FragmentCgvBinding
-import kr.co.helicopark.movienoti.presentation.MainActivity
 import kr.co.helicopark.movienoti.presentation.cgv.bottom.MovieBottomFragment
-import kr.co.helicopark.movienoti.presentation.model.CgvMovieItem
+import java.util.Calendar
+
 
 @AndroidEntryPoint
 class CgvFragment : Fragment() {
     private lateinit var binding: FragmentCgvBinding
     private val viewModel: CgvViewModel by viewModels()
 
-    private val itemList = ArrayList<CgvMovieItem>()
-
     private val adapter by lazy {
-        CgvMovieListAdapter { movieListItem ->
-            MovieBottomFragment().let { fragment ->
-                Bundle().let {
-                    it.putString("movieName", movieListItem.title)
-                    fragment.arguments = it
+        CgvAdapter { movieListItem ->
+            showDatePicker(movieListItem.title) { reservationDate ->
+                MovieBottomFragment().let { fragment ->
+                    Bundle().let {
+                        it.putString("movieTitle", movieListItem.title)
+                        it.putLong("reservationDate", reservationDate)
+                        fragment.arguments = it
+                    }
+
+                    fragment.show(requireActivity().supportFragmentManager, "MovieBottomFragment")
                 }
-                fragment.show(requireActivity().supportFragmentManager, "MovieBottomFragment")
             }
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCgvBinding.inflate(inflater, container, false)
+        binding.viewmodel = viewModel
+        binding.adapter = adapter
+        binding.lifecycleOwner = this
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initAdapter()
 
-        binding.tvListAbcOrder.setOnClickListener {
-
-            Firebase.messaging.token.addOnCompleteListener(
-                OnCompleteListener { task ->
-                    if (!task.isSuccessful) {
-                        return@OnCompleteListener
-                    }
-
-                    // Get new FCM registration token
-                    val token = task.result
-
-                    // Log and toast
-                    Log.e(MainActivity::class.java.simpleName, "Firebase.messaging.token.addOnCompleteListener: $token")
-                },
-            )
+        binding.tvListReservationRateOrder.setOnClickListener {
+            viewModel.initCgvMovieList("", 0)
         }
 
-        binding.rvList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
+        binding.tvListAbcOrder.setOnClickListener {
+            viewModel.initCgvMovieList("", 1)
+        }
 
-                if ((recyclerView.layoutManager as LinearLayoutManager).findLastCompletelyVisibleItemPosition() == adapter.currentList.size - 1) {
-                    lifecycleScope.launch {
-                        viewModel.fetchCgvMoreMovieList().collectLatest {
-                            when (it.state) {
-                                UiStatus.SUCCESS -> {
-                                    val list = ArrayList(itemList)
-                                    it.data?.forEach { cgvMoreMovieItem ->
-                                        list.add(
-                                            CgvMovieItem(
-                                                cgvMoreMovieItem.thumb,
-                                                cgvMoreMovieItem.title,
-                                                String.format(getString(R.string.format_reservation_rate), cgvMoreMovieItem.reservationRate),
-                                                if (cgvMoreMovieItem.dDay.contains("-")) {
-                                                    String.format(getString(R.string.format_released_date), cgvMoreMovieItem.releasedDate, "")
-                                                } else {
-                                                    String.format(
-                                                        getString(R.string.format_released_date),
-                                                        cgvMoreMovieItem.releasedDate,
-                                                        "D-${cgvMoreMovieItem.dDay}"
-                                                    )
-                                                }
-                                            )
-                                        )
-                                    }
-
-                                    adapter.submitList(list)
-                                    binding.progressCgv.visibility = View.GONE
-                                }
-
-                                UiStatus.ERROR -> {
-                                    binding.progressCgv.visibility = View.GONE
-                                }
-
-                                UiStatus.LOADING -> {
-                                    binding.progressCgv.visibility = View.VISIBLE
-                                }
-
-                                else -> {
-                                    binding.progressCgv.visibility = View.GONE
-                                }
-                            }
-                        }
-                    }
-                }
+        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
             }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.initCgvMovieList(newText ?: "", 2)
+                return true
+            }
+
         })
 
         lifecycleScope.launch {
-            viewModel.fetchCgvMovieList().collectLatest {
-                when (it.state) {
-                    UiStatus.SUCCESS -> {
-                        it.data?.forEach { cgvMovieItem ->
-                            itemList.add(cgvMovieItem)
-                        }
-
-                        adapter.submitList(itemList)
-                        binding.progressCgv.visibility = View.GONE
-                    }
-
-                    UiStatus.ERROR -> {
-                        binding.progressCgv.visibility = View.GONE
-                    }
-
-                    UiStatus.LOADING -> {
-                        binding.progressCgv.visibility = View.VISIBLE
-                    }
-
-                    else -> {
-                        binding.progressCgv.visibility = View.GONE
-                    }
-                }
-            }
+            viewModel.initCgvMovieList("", 0)
         }
-
-//        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO)  {
-//            launch {
-//                viewModel.cgvMovieList.collect {
-//                    when (it.state) {
-//                        UiStatus.LOADING -> {
-//                            binding.progressCgv.visibility = View.VISIBLE
-//                        }
-//
-//                        UiStatus.SUCCESS -> {
-//                            it.data?.forEach { cgvMovieItem ->
-//                                itemList.add(cgvMovieItem)
-//                            }
-//
-//                            adapter.submitList(itemList)
-//
-//                            binding.progressCgv.visibility = View.GONE
-//                        }
-//
-//                        UiStatus.ERROR -> {
-//                            // TODO: 에러 처리 추가 생각
-//                            binding.progressCgv.visibility = View.GONE
-//                        }
-//
-//                        else -> {}
-//                    }
-//                }
-//            }
-//
-//            launch {
-//                viewModel.cgvMoreMovieList.collect {
-//                    when (it.state) {
-//                        UiStatus.LOADING -> {
-//                            binding.progressCgv.visibility = View.VISIBLE
-//                        }
-//
-//                        UiStatus.SUCCESS -> {
-//                            it.data?.forEach { cgvMoreMovieItem ->
-//                                itemList.add(
-//                                    CgvMovieItem(
-//                                        cgvMoreMovieItem.thumb,
-//                                        cgvMoreMovieItem.title,
-//                                        String.format(getString(R.string.format_reservation_rate), cgvMoreMovieItem.reservationRate),
-//                                        if (cgvMoreMovieItem.dDay.contains("-")) {
-//                                            String.format(getString(R.string.format_released_date), cgvMoreMovieItem.releasedDate, "")
-//                                        } else {
-//                                            String.format(getString(R.string.format_released_date), cgvMoreMovieItem.releasedDate, "D-${cgvMoreMovieItem.dDay}")
-//                                        }
-//                                    )
-//                                )
-//
-//                                adapter.submitList(itemList)
-//                            }
-//
-//                            binding.progressCgv.visibility = View.GONE
-//                        }
-//
-//                        UiStatus.ERROR -> {
-//                            // TODO: 에러 처리 추가 생각
-//                            binding.progressCgv.visibility = View.GONE
-//                        }
-//
-//                        else -> {}
-//                    }
-//                }
-//            }
-//
-//            launch { viewModel.fetchCgvMovieList() }
-//        }
     }
 
-    private fun initAdapter() {
-        binding.rvList.adapter = adapter
-        binding.rvList.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvList.itemAnimator = DefaultItemAnimator()
+    private fun showDatePicker(movieTitle: String, onPositiveButtonClickListener: MaterialPickerOnPositiveButtonClickListener<in Long>) {
+        val datePickerBuilder = MaterialDatePicker.Builder.datePicker()
+        datePickerBuilder.setTitleText(String.format(getString(R.string.date_picker_format_title), movieTitle))
+        datePickerBuilder.setCalendarConstraints(calendarConstraints())
+
+        val datePicker = datePickerBuilder.build()
+        datePicker.addOnPositiveButtonClickListener(onPositiveButtonClickListener)
+        datePicker.show(requireActivity().supportFragmentManager, datePicker.toString())
+    }
+
+    private fun calendarConstraints(): CalendarConstraints {
+        val constraintsBuilderRange = CalendarConstraints.Builder()
+        val calendarStart: Calendar = Calendar.getInstance()
+        val calendarEnd: Calendar = Calendar.getInstance()
+        calendarStart.add(Calendar.DATE, -1)
+        calendarEnd.add(Calendar.MONTH, 1)
+
+        constraintsBuilderRange.setStart(calendarStart.timeInMillis)
+        constraintsBuilderRange.setEnd(calendarEnd.timeInMillis)
+
+        val listValidators = ArrayList<DateValidator>()
+        listValidators.add(DateValidatorPointForward.from(calendarStart.timeInMillis))
+        listValidators.add(DateValidatorPointBackward.before(calendarEnd.timeInMillis))
+        val validators = CompositeDateValidator.allOf(listValidators)
+
+        constraintsBuilderRange.setValidator(validators)
+
+        return constraintsBuilderRange.build()
     }
 }

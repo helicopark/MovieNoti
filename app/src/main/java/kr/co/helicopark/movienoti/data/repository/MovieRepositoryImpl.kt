@@ -27,10 +27,18 @@ class MovieRepositoryImpl @Inject constructor(
 ) : MovieRepository {
     override fun getFirebaseToken(): Flow<Resource<String>> = callbackFlow {
         trySend(Resource.Loading(UiStatus.LOADING))
-        firebaseTokenTask.addOnSuccessListener {
+        firebaseTokenTask
+            .addOnSuccessListener {
+                trySend(Resource.Success(it, UiStatus.SUCCESS))
+            }
+            .addOnFailureListener { e ->
+                trySend(Resource.Error("getFirebaseToken, addOnFailureListener:${e.message}", UiStatus.ERROR))
+            }
+            .addOnCanceledListener {
+                trySend(Resource.Error("getFirebaseToken, addOnCanceledListener", UiStatus.ERROR))
+            }
 
-        }
-
+        awaitClose { }
     }
 
     override fun getCgvMovieList(): Flow<Resource<List<CgvMovie>>> = flow {

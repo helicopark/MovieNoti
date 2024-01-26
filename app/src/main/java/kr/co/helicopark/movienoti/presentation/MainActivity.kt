@@ -11,22 +11,27 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.ktx.messaging
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kr.co.helicopark.movienoti.R
 import kr.co.helicopark.movienoti.databinding.ActivityMainBinding
+import kr.co.helicopark.movienoti.domain.model.Resource
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val viewModel: MainViewModel by viewModels()
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -54,19 +59,24 @@ class MainActivity : AppCompatActivity() {
 
         createChannel()
 
-        Firebase.messaging.token.addOnCompleteListener(
-            OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    return@OnCompleteListener
+        lifecycleScope.launch {
+            viewModel.initFirebaseToken().collectLatest {
+                when (it) {
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Success -> {
+                        Toast.makeText(this@MainActivity, it.data, Toast.LENGTH_SHORT).show()
+                    }
+
+                    is Resource.Error -> {
+                        Toast.makeText(this@MainActivity, "initFirebaseToken error: ${it.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
+            }
+        }
 
-                // Get new FCM registration token
-                val token = task.result
-
-                // Log and toast
-                Log.e(MainActivity::class.java.simpleName, "Firebase.messaging.token.addOnCompleteListener: $token")
-            },
-        )
         val auth: FirebaseAuth = Firebase.auth
 
         auth.signInAnonymously()
@@ -123,11 +133,7 @@ class MainActivity : AppCompatActivity() {
         val navView = binding.navigation
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.frame_fragment) as NavHostFragment
 
-        val navController = navHostFragment.navController
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-
-        }
-
+        val navController = navHostFragment.findNavController()
         navView.setupWithNavController(navController)
     }
 }

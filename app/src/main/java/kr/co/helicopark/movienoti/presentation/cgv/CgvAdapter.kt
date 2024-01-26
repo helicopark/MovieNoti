@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import kr.co.helicopark.movienoti.databinding.ItemMovieListBinding
 import kr.co.helicopark.movienoti.presentation.model.CgvMovieItem
 
-class CgvMovieListAdapter(private val onItemClickListener: (CgvMovieItem) -> Unit) : ListAdapter<CgvMovieItem, CgvMovieListAdapter.ViewHolder>(MovieDiffUtil) {
+class CgvAdapter(private val onItemClickListener: (CgvMovieItem) -> Unit) : ListAdapter<CgvMovieItem, CgvAdapter.ViewHolder>(MovieDiffUtil) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemMovieListBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }

@@ -2,6 +2,7 @@ package kr.co.helicopark.movienoti.presentation.model
 
 data class PersonalReservationMovieItem(
     val date: Long,
+    val reservationDate: Long,
     val brand: String,    // CGV, LOTTE, MEGABOX
     val movieName: String,
     val movieFormat: String,   // 4DX, SCREENX, IMAX ...

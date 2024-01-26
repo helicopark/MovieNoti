@@ -27,17 +27,20 @@
     <string name="dialog_ok">확인</string>
     <string name="dialog_cancel">취소</string>
     <string name="dialog_setting">설정 화면</string>
-    <string name="dialog_post_notification_message">영화 오픈은 알림을 통해서 알려드려요. 알림을 받기 위해서 알림 권한이 필요해요.</string>
-    <string name="dialog_reject_post_notification_message">영화 오픈 알림을 받기 원하시면 설정화면에서 알림 권한을 허용해주세요.</string>
+    <string name="dialog_post_notification_message">영화 예매 오픈은 알림을 통해서 알려드려요. 알림을 받기 위해서 알림 권한이 필요해요.</string>
+    <string name="dialog_reject_post_notification_message">영화 예매 오픈 알림을 받기 원하시면 설정화면에서 알림 권한을 허용해주세요.</string>
 
     <string name="dialog_movie_info_title">%s 영화관을 선택했어요. 영화 종류를 선택해주세요.</string>
 
     <!--    Reservation List-->
     <string name="reservation_delete">삭제</string>
 
+    <!--DatePicker-->
+    <string name="date_picker_format_title">%s 영화를 선택했어요. 날짜를 선택해주세요.</string>
 
     <!--TheaterBottomSheetDialogFragment-->
-    <string name="bottom_sheet_format_title"><![CDATA[<b>%s</b>]]> 영화를 선택했어요. 영화관을 선택해주세요.</string>
+<!--    와 %s 일자를 선택했어요.-->
+    <string name="bottom_sheet_format_title"><![CDATA[<b>%s</b>에 <b>%s</b>]]> 영화 예매 오픈 알림을 설정해요. 영화관을 선택해주세요.</string>
 
     <string name="seoul">서울</string>
     <string name="gyeonggi">경기</string>
