@@ -12,6 +12,10 @@
         <variable
             name="viewmodel"
             type="kr.co.helicopark.movienoti.presentation.cgv.CgvViewModel" />
+
+        <variable
+            name="order"
+            type="kr.co.helicopark.movienoti.presentation.cgv.CgvOrder" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,10 +27,13 @@
             android:id="@+id/search"
             android:layout_width="0dp"
             android:layout_height="?actionBarSize"
+            android:imeOptions="actionDone"
+            android:inputType="text"
             app:iconifiedByDefault="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:queryBackground="@null"
             app:queryHint="검색어를 입력하시오" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,6 +48,7 @@
             <TextView
                 android:id="@+id/tv_list_reservation_rate_order"
                 style="@style/TextStyle"
+                isBold="@{viewmodel.cgvOrder == order.ReservationRateOrder}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
@@ -57,6 +65,7 @@
             <TextView
                 android:id="@+id/tv_list_abc_order"
                 style="@style/TextStyle"
+                isBold="@{viewmodel.cgvOrder == order.AbcOrder}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"

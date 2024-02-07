@@ -6,14 +6,14 @@
     android:layout_height="146dp">
 
     <ImageView
-        tools:ignore="ContentDescription"
         android:id="@+id/iv_movie_item_thumb"
         android:layout_width="98dp"
         android:layout_height="130dp"
         android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/tv_movie_item_title"
@@ -42,7 +42,8 @@
         android:textSize="13dp"
         app:layout_constraintStart_toEndOf="@id/iv_movie_item_thumb"
         app:layout_constraintTop_toBottomOf="@id/tv_movie_item_title"
-        tools:text="예매율 19.8%" />
+        tools:text="예매율 19.8%"
+        tools:ignore="SpUsage" />
 
     <TextView
         android:id="@+id/tv_movie_item_release_date"

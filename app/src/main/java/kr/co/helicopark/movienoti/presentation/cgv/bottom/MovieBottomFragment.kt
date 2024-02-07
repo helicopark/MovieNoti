@@ -61,6 +61,7 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
     private var movieFormat = ""
     private var areaCode = "01"
     private var theaterCode = ""
+    private var thumb = ""
 
     private val movieBottomAreaAdapter: MovieBottomAreaAdapter by lazy {
         MovieBottomAreaAdapter {
@@ -122,7 +123,7 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
                     )
 
                     val personalReservationMovieInfo = hashMapOf(
-                        date.toString() to PersonalReservationMovieItem(date, reservationDate, "CGV", movieTitle, movieFormat, theaterCode, areaCode)
+                        date.toString() to PersonalReservationMovieItem(date, reservationDate, "CGV", movieTitle, movieFormat, areaCode, theaterCode, thumb)
                     )
 
                     viewModel.setAdminReservationMovie(adminReservationMovieInfo)
@@ -148,6 +149,7 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
 
         movieTitle = arguments?.getString("movieTitle") ?: ""
         reservationDate = arguments?.getLong("reservationDate") ?: 0L
+        thumb = arguments?.getString("thumb") ?: ""
 
         val formattedDate = SimpleDateFormat("yy년 MM월 dd일", Locale.getDefault()).format(reservationDate)
 

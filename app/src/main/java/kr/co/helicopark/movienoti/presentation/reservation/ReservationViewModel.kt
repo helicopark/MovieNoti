@@ -14,13 +14,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReservationViewModel @Inject constructor(private val getPersonalReservationMovieListUseCase: GetPersonalReservationMovieListUseCase) : ViewModel() {
-    private val _uiState: MutableStateFlow<Resource<List<PersonalReservationMovie>>> = MutableStateFlow(Resource.Loading(UiStatus.LOADING))
-    val uiState: StateFlow<Resource<List<PersonalReservationMovie>>> = _uiState
+    private val _reservationList: MutableStateFlow<Resource<List<PersonalReservationMovie>>> = MutableStateFlow(Resource.Loading(UiStatus.LOADING))
+    val reservationList: StateFlow<Resource<List<PersonalReservationMovie>>> = _reservationList
 
     fun getReservationMovieList() {
         viewModelScope.launch {
             getPersonalReservationMovieListUseCase.invoke().collect() {
-                _uiState.emit(it)
+                _reservationList.emit(it)
             }
         }
     }

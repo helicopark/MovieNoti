@@ -15,6 +15,11 @@ import kr.co.helicopark.movienoti.domain.usecase.GetCgvMovieListUseCase
 import kr.co.helicopark.movienoti.presentation.model.CgvMovieItem
 import javax.inject.Inject
 
+enum class CgvOrder {
+    ReservationRateOrder,
+    AbcOrder
+}
+
 @HiltViewModel
 class CgvViewModel @Inject constructor(
     private val getCgvMovieListUseCase: GetCgvMovieListUseCase,
@@ -23,8 +28,13 @@ class CgvViewModel @Inject constructor(
     private val _cgvMovieList: MutableStateFlow<Resource<List<CgvMovieItem>>> = MutableStateFlow(Resource.Loading(UiStatus.LOADING))
     val cgvMovieList: StateFlow<Resource<List<CgvMovieItem>>> = _cgvMovieList
 
-    fun initCgvMovieList(searchText: String, order: Int) {
+    private val _cgvOrder: MutableStateFlow<CgvOrder> = MutableStateFlow(CgvOrder.ReservationRateOrder)
+    val cgvOrder: StateFlow<CgvOrder> = _cgvOrder
+
+    fun initCgvMovieList(order: CgvOrder) {
         viewModelScope.launch(Dispatchers.IO) {
+            _cgvOrder.emit(order)
+
             getCgvMovieListUseCase.invoke().collectLatest {
                 when (it) {
                     is Resource.Loading -> {
@@ -37,7 +47,7 @@ class CgvViewModel @Inject constructor(
                         }
 
                         if (!cgvMovieItemList.isNullOrEmpty()) {
-                            fetchCgvMoreMovieList(cgvMovieItemList, searchText, order)
+                            fetchCgvMoreMovieList(cgvMovieItemList, order)
                         } else {
                             _cgvMovieList.emit(Resource.Error("CgvViewModel, fetchCgvMovieList, cgvMovieItemList isNullOrEmpty", it.state))
                         }
@@ -51,7 +61,7 @@ class CgvViewModel @Inject constructor(
         }
     }
 
-    private fun fetchCgvMoreMovieList(cgvMovieList: List<CgvMovieItem>, searchText: String, order: Int) {
+    private fun fetchCgvMoreMovieList(cgvMovieList: List<CgvMovieItem>, order: CgvOrder) {
         viewModelScope.launch(Dispatchers.IO) {
             getCgvMoreMovieListUseCase.invoke().collectLatest {
                 when (it) {
@@ -89,16 +99,13 @@ class CgvViewModel @Inject constructor(
                         }
 
                         if (cgvMovieList.isNotEmpty()) {
-                            val sortedMovieList = if (searchText.isNotEmpty()) {
-                                cgvMovieArrayList.sortedBy { cgvMovieItem ->
-                                    cgvMovieItem.title.contains(searchText)
+                            val sortedMovieList = when (order) {
+                                // 기본값
+                                CgvOrder.ReservationRateOrder -> {
+                                    cgvMovieArrayList
                                 }
-                            } else {
-                                if (order == 0) {
-                                    cgvMovieArrayList.sortedByDescending { cgvMovieItem ->
-                                        cgvMovieItem.reservationRate
-                                    }
-                                } else {
+
+                                CgvOrder.AbcOrder -> {
                                     cgvMovieArrayList.sortedBy { cgvMovieItem ->
                                         cgvMovieItem.title
                                     }

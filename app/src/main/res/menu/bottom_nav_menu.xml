@@ -2,21 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_cgv"
+        android:icon="@drawable/icon_movie_list"
         android:title="@string/cgv" />
 
-    <item
-        android:id="@+id/navigation_megabox"
-        android:title="@string/megabox" />
+    <!--    <item-->
+    <!--        android:id="@+id/navigation_megabox"-->
+    <!--        android:title="@string/megabox" />-->
 
-    <item
-        android:id="@+id/navigation_lotte_cinema"
-        android:title="@string/lotte_cinema" />
+    <!--    <item-->
+    <!--        android:id="@+id/navigation_lotte_cinema"-->
+    <!--        android:title="@string/lotte_cinema" />-->
 
     <item
         android:id="@+id/navigation_reservation"
+        android:icon="@drawable/icon_reservation_list"
         android:title="@string/reservation" />
 
     <item
         android:id="@+id/navigation_settings"
+        android:icon="@drawable/icon_setting"
         android:title="@string/settings" />
 </menu>

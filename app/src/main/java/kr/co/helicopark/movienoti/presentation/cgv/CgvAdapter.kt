@@ -3,6 +3,8 @@ package kr.co.helicopark.movienoti.presentation.cgv
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +12,9 @@ import com.bumptech.glide.Glide
 import kr.co.helicopark.movienoti.databinding.ItemMovieListBinding
 import kr.co.helicopark.movienoti.presentation.model.CgvMovieItem
 
-class CgvAdapter(private val onItemClickListener: (CgvMovieItem) -> Unit) : ListAdapter<CgvMovieItem, CgvAdapter.ViewHolder>(MovieDiffUtil) {
+class CgvAdapter(private val onItemClickListener: (CgvMovieItem) -> Unit) : ListAdapter<CgvMovieItem, CgvAdapter.ViewHolder>(MovieDiffUtil), Filterable {
+    var list = listOf<CgvMovieItem>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemMovieListBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
@@ -28,6 +32,30 @@ class CgvAdapter(private val onItemClickListener: (CgvMovieItem) -> Unit) : List
 
             binding.root.setOnClickListener {
                 onItemClickListener.invoke(getItem(adapterPosition))
+            }
+        }
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val filteredList = if (constraint.isNullOrEmpty()) {
+                    list
+                } else {
+                    list.filter {
+                        it.title.contains(constraint)
+                    }.map {
+                        it
+                    }
+                }
+
+                val results = FilterResults()
+                results.values = filteredList
+                return results
+            }
+
+            override fun publishResults(constraint: CharSequence?, filterResults: FilterResults?) {
+                submitList(filterResults?.values as MutableList<CgvMovieItem>?)
             }
         }
     }

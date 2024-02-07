@@ -5,63 +5,79 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_reservation_list_item_date"
-        style="@style/TextStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:textColor="@color/text_sub_color"
-        app:layout_constraintBottom_toBottomOf="@id/tv_reservation_list_item_title"
+    <ImageView
+        android:id="@+id/iv_reservation_item_thumb"
+        android:layout_width="98dp"
+        android:layout_height="130dp"
+        android:layout_margin="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_reservation_list_item_title"
-        tools:text="24.01.02" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/tv_reservation_list_item_title"
         style="@style/TextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="4dp"
+        android:gravity="start"
         android:textColor="@color/text_color"
-        android:textSize="17dp"
+        android:textSize="16dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/tv_reservation_list_item_theater"
-        app:layout_constraintStart_toEndOf="@id/tv_reservation_list_item_date"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/tv_reservation_list_item_format"
+        app:layout_constraintStart_toEndOf="@id/iv_reservation_item_thumb"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="SpUsage"
-        tools:text="서울의 봄" />
+        tools:text="해리 포터와 혼혈 왕자" />
+
+    <TextView
+        android:id="@+id/tv_reservation_list_item_format"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="14dp"
+        android:textColor="@color/text_color"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_reservation_list_item_title"
+        app:layout_constraintTop_toTopOf="@id/tv_reservation_list_item_title"
+        app:layout_constraintBottom_toBottomOf="@id/tv_reservation_list_item_title"
+        tools:text="4DX"
+        tools:ignore="SpUsage" />
+
+    <TextView
+        android:id="@+id/tv_reservation_list_item_date"
+        style="@style/TextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="13dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/iv_reservation_item_thumb"
+        app:layout_constraintTop_toBottomOf="@id/tv_reservation_list_item_title"
+        tools:ignore="SpUsage"
+        tools:text="예약날짜: 2024.02.05" />
+
 
     <TextView
         android:id="@+id/tv_reservation_list_item_theater"
+        style="@style/TextStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
-        style="@style/TextStyle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_reservation_list_item_date"
-        app:layout_constraintTop_toBottomOf="@id/tv_reservation_list_item_title"
-        tools:text="CGV구로" />
-
-    <TextView
-        android:id="@+id/tv_reservation_list_item_movie"
-        android:layout_width="wrap_content"
-        style="@style/TextStyle"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text_color"
-        android:layout_marginStart="4dp"
-        app:layout_constraintBottom_toBottomOf="@id/tv_reservation_list_item_title"
-        app:layout_constraintStart_toEndOf="@id/tv_reservation_list_item_title"
-        app:layout_constraintTop_toTopOf="@id/tv_reservation_list_item_title"
-        tools:text="4DX" />
-
-<!--    <TextView-->
-<!--        android:id="@+id/tv_reservation_list_item_delete"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content" />-->
+        android:textSize="13dp"
+        app:layout_constraintStart_toEndOf="@id/iv_reservation_item_thumb"
+        app:layout_constraintTop_toBottomOf="@id/tv_reservation_list_item_date"
+        tools:ignore="SpUsage"
+        tools:text="서울-CGV구로" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

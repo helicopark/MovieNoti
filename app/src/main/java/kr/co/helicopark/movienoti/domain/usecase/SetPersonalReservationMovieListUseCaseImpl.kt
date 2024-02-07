@@ -6,5 +6,5 @@ import kr.co.helicopark.movienoti.data.repository.MovieRepository
 import javax.inject.Inject
 
 class SetPersonalReservationMovieListUseCaseImpl @Inject constructor(private val movieRepository: MovieRepository) : SetPersonalReservationMovieListUseCase {
-    override fun invoke(personalReservationMOvieItem: Any): Flow<Resource<String>> = movieRepository.setPersonalReservationMovie(personalReservationMOvieItem)
+    override fun invoke(personalReservationMovieItem: Any): Flow<Resource<String>> = movieRepository.setPersonalReservationMovie(personalReservationMovieItem)
 }

@@ -33,12 +33,12 @@ class CgvNetworkRepositoryImpl @Inject constructor(private val apiService: ApiSe
 
                 emit(Resource.Success(cgvMoreMovieList, UiStatus.SUCCESS))
             } else {
-                emit(Resource.Error("getCgvMoreMovieList, response fail: response.isSuccessful false", UiStatus.ERROR))
+                emit(Resource.Error("", UiStatus.ERROR))    // 더보기 영화가 API 실패할 경우 넘어감
             }
         } catch (e: HttpException) {
-            emit(Resource.Error("getCgvMoreMovieList, HttpException: ${e.message}", UiStatus.ERROR))
+            emit(Resource.Error(e.message, UiStatus.ERROR))
         } catch (t: Throwable) {
-            emit(Resource.Error("getCgvMoreMovieList, Throwable: ${t.message}", UiStatus.ERROR))
+            emit(Resource.Error(t.message, UiStatus.ERROR))
         }
     }
 }

@@ -8,6 +8,8 @@ import kr.co.helicopark.movienoti.domain.usecase.GetCgvMoreMovieListUseCase
 import kr.co.helicopark.movienoti.domain.usecase.GetCgvMoreMovieListUseCaseImpl
 import kr.co.helicopark.movienoti.domain.usecase.GetCgvMovieListUseCase
 import kr.co.helicopark.movienoti.domain.usecase.GetCgvMovieListUseCaseImpl
+import kr.co.helicopark.movienoti.domain.usecase.GetFirebaseAuthUseCase
+import kr.co.helicopark.movienoti.domain.usecase.ReadFirebaseAuthUseCaseImpl
 import kr.co.helicopark.movienoti.domain.usecase.GetFirebaseTokenUseCase
 import kr.co.helicopark.movienoti.domain.usecase.GetFirebaseTokenUseCaseImpl
 import kr.co.helicopark.movienoti.domain.usecase.GetPersonalReservationMovieListUseCase
@@ -20,6 +22,9 @@ import kr.co.helicopark.movienoti.domain.usecase.SetPersonalReservationMovieList
 @Module
 @InstallIn(ViewModelComponent::class)
 interface UseCaseModule {
+    @Binds
+    fun bindGetFirebaseAuthUseCase(getFirebaseAuthUseCase: ReadFirebaseAuthUseCaseImpl): GetFirebaseAuthUseCase
+
     @Binds
     fun bindGetFirebaseTokenUseCase(getFirebaseTokenUseCase: GetFirebaseTokenUseCaseImpl): GetFirebaseTokenUseCase
 

@@ -35,6 +35,7 @@ class CgvFragment : Fragment() {
                     Bundle().let {
                         it.putString("movieTitle", movieListItem.title)
                         it.putLong("reservationDate", reservationDate)
+                        it.putString("thumb", movieListItem.thumb)
                         fragment.arguments = it
                     }
 
@@ -49,6 +50,7 @@ class CgvFragment : Fragment() {
         binding.viewmodel = viewModel
         binding.adapter = adapter
         binding.lifecycleOwner = this
+
         return binding.root
     }
 
@@ -56,27 +58,28 @@ class CgvFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.tvListReservationRateOrder.setOnClickListener {
-            viewModel.initCgvMovieList("", 0)
+            viewModel.initCgvMovieList(CgvOrder.ReservationRateOrder)
+            binding.search.setQuery("", false)
         }
 
         binding.tvListAbcOrder.setOnClickListener {
-            viewModel.initCgvMovieList("", 1)
+            viewModel.initCgvMovieList(CgvOrder.AbcOrder)
+            binding.search.setQuery("", false)
         }
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
+                return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.initCgvMovieList(newText ?: "", 2)
+                adapter.filter.filter(newText)
                 return true
             }
-
         })
 
         lifecycleScope.launch {
-            viewModel.initCgvMovieList("", 0)
+            viewModel.initCgvMovieList(CgvOrder.ReservationRateOrder)
         }
     }
 

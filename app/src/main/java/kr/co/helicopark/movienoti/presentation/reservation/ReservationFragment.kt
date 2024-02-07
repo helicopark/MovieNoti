@@ -19,12 +19,15 @@ class ReservationFragment : Fragment() {
     private lateinit var binding: FragmentReservationBinding
     private val viewModel: ReservationViewModel by viewModels()
 
-    private val adapter:ReservationListAdapter by lazy {
-        ReservationListAdapter()
+    private val adapter:ReservationAdapter by lazy {
+        ReservationAdapter()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentReservationBinding.inflate(inflater, container, false)
+        binding.viewmodel = viewModel
+        binding.adapter = adapter
+        binding.lifecycleOwner = this
         return binding.root
     }
 
@@ -34,7 +37,7 @@ class ReservationFragment : Fragment() {
         initReservationMovieList()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.uiState.collectLatest {
+            viewModel.reservationList.collectLatest {
                 when (it.state) {
                     UiStatus.LOADING -> {
                         binding.progressReservation.visibility = View.VISIBLE
