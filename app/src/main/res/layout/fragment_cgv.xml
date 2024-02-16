@@ -7,15 +7,15 @@
 
         <variable
             name="adapter"
-            type="kr.co.helicopark.movienoti.presentation.cgv.CgvAdapter" />
+            type="kr.co.helicopark.movienoti.ui.cgv.CgvAdapter" />
 
         <variable
             name="viewmodel"
-            type="kr.co.helicopark.movienoti.presentation.cgv.CgvViewModel" />
+            type="kr.co.helicopark.movienoti.ui.cgv.CgvViewModel" />
 
         <variable
             name="order"
-            type="kr.co.helicopark.movienoti.presentation.cgv.CgvOrder" />
+            type="kr.co.helicopark.movienoti.ui.cgv.CgvOrder" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -55,7 +55,7 @@
                 android:paddingTop="16dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="16dp"
-                android:text="@string/reservation_rate_order"
+                android:text="@string/cgv_reservation_rate_order"
                 android:textSize="13dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -72,7 +72,7 @@
                 android:paddingTop="16dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="16dp"
-                android:text="@string/abc_order"
+                android:text="@string/cgv_abc_order"
                 android:textSize="13dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tv_list_reservation_rate_order"

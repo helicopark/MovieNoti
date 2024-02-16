@@ -19,7 +19,7 @@
         android:title="@string/reservation" />
 
     <item
-        android:id="@+id/navigation_settings"
+        android:id="@+id/navigation_setting"
         android:icon="@drawable/icon_setting"
         android:title="@string/settings" />
 </menu>

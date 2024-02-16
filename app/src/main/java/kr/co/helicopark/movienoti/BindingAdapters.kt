@@ -10,10 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.co.helicopark.movienoti.domain.model.PersonalReservationMovie
 import kr.co.helicopark.movienoti.domain.model.Resource
-import kr.co.helicopark.movienoti.presentation.cgv.CgvAdapter
-import kr.co.helicopark.movienoti.presentation.model.CgvMovieItem
-import kr.co.helicopark.movienoti.presentation.reservation.ReservationAdapter
-import kr.co.helicopark.movienoti.presentation.reservation.ReservationItem
+import kr.co.helicopark.movienoti.ui.cgv.CgvAdapter
+import kr.co.helicopark.movienoti.ui.model.CgvMovieItem
+import kr.co.helicopark.movienoti.ui.reservation.ReservationAdapter
 
 @BindingAdapter("adapter", "submitList", requireAll = true)
 fun bindCgvRecyclerView(view: RecyclerView, adapter: CgvAdapter, submitList: Resource<List<CgvMovieItem>?>) {

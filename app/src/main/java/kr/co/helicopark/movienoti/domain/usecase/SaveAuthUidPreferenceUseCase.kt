@@ -1,8 +1,6 @@
 package kr.co.helicopark.movienoti.domain.usecase
 
-import kotlinx.coroutines.flow.Flow
-import kr.co.helicopark.movienoti.domain.model.Resource
-
+// DataStore에 uid 저장하기
 interface SaveAuthUidPreferenceUseCase {
-    suspend fun invoke(): Flow<Resource<String>>
+    suspend fun invoke(authUid: String)
 }

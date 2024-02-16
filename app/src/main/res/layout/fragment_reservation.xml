@@ -7,16 +7,31 @@
 
         <variable
             name="adapter"
-            type="kr.co.helicopark.movienoti.presentation.reservation.ReservationAdapter" />
+            type="kr.co.helicopark.movienoti.ui.reservation.ReservationAdapter" />
 
         <variable
             name="viewmodel"
-            type="kr.co.helicopark.movienoti.presentation.reservation.ReservationViewModel" />
+            type="kr.co.helicopark.movienoti.ui.reservation.ReservationViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_reservation_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/background"
+            android:padding="16dp"
+            android:text="@string/reservation_title"
+            android:textColor="@color/text_color"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpUsage" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_reservation"
@@ -30,7 +45,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_reservation_title"
             tools:listitem="@layout/item_reservation_list" />
 
 

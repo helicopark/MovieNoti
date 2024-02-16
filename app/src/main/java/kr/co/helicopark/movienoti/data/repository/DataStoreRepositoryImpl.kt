@@ -5,9 +5,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kr.co.helicopark.movienoti.domain.model.Resource
-import kr.co.helicopark.movienoti.domain.model.UiStatus
 import javax.inject.Inject
 
 
@@ -18,11 +15,7 @@ class DataStoreRepositoryImpl @Inject constructor(private val dataStore: DataSto
         }
     }
 
-    override suspend fun readFirebaseAuthUid() = flow {
-        emit(Resource.Loading(UiStatus.LOADING))
-        val data = dataStore.data.first()
-        emit(Resource.Success(data[stringPreferencesKey("firebaseAuthUid")] ?: "", UiStatus.SUCCESS))
-    }
+    override suspend fun readFirebaseAuthUid(): String = dataStore.data.first()[stringPreferencesKey("firebaseAuthUid")] ?: ""
 
     override suspend fun saveFirebaseMessageToken(token: String) {
         dataStore.edit {
@@ -30,9 +23,5 @@ class DataStoreRepositoryImpl @Inject constructor(private val dataStore: DataSto
         }
     }
 
-    override suspend fun readFirebaseMessageToken() = flow {
-        emit(Resource.Loading(UiStatus.LOADING))
-        val data = dataStore.data.first()
-        emit(Resource.Success(data[stringPreferencesKey("firebaseMessageToken")] ?: "", UiStatus.SUCCESS))
-    }
+    override suspend fun readFirebaseMessageToken() = dataStore.data.first()[stringPreferencesKey("firebaseMessageToken")] ?: ""
 }
