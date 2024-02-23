@@ -12,6 +12,8 @@
         <variable
             name="viewmodel"
             type="kr.co.helicopark.movienoti.ui.reservation.ReservationViewModel" />
+
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,6 +49,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_reservation_title"
             tools:listitem="@layout/item_reservation_list" />
+
+        <TextView
+            android:id="@+id/rv_reservation_empty"
+            visible="@{viewmodel.reservationList}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reservation_empty"
+            android:textColor="@color/text_color"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpUsage"
+            tools:visibility="gone" />
 
 
         <ProgressBar

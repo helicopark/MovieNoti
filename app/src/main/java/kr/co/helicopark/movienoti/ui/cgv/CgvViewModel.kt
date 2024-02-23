@@ -31,6 +31,10 @@ class CgvViewModel @Inject constructor(
     private val _cgvOrder: MutableStateFlow<CgvOrder> = MutableStateFlow(CgvOrder.ReservationRateOrder)
     val cgvOrder: StateFlow<CgvOrder> = _cgvOrder
 
+    init {
+        initCgvMovieList(CgvOrder.ReservationRateOrder)
+    }
+
     fun initCgvMovieList(order: CgvOrder) {
         viewModelScope.launch(Dispatchers.IO) {
             _cgvOrder.emit(order)
@@ -47,9 +51,9 @@ class CgvViewModel @Inject constructor(
                         }
 
                         if (!cgvMovieItemList.isNullOrEmpty()) {
-                            fetchCgvMoreMovieList(cgvMovieItemList, order)
+                            getCgvMoreMovieList(cgvMovieItemList, order)
                         } else {
-                            _cgvMovieList.emit(Resource.Error("CgvViewModel, fetchCgvMovieList, cgvMovieItemList isNullOrEmpty", it.state))
+                            _cgvMovieList.emit(Resource.Error("CgvViewModel, getCgvMovieList, cgvMovieItemList isNullOrEmpty", it.state))
                         }
                     }
 
@@ -61,7 +65,7 @@ class CgvViewModel @Inject constructor(
         }
     }
 
-    private fun fetchCgvMoreMovieList(cgvMovieList: List<CgvMovieItem>, order: CgvOrder) {
+    private fun getCgvMoreMovieList(cgvMovieList: List<CgvMovieItem>, order: CgvOrder) {
         viewModelScope.launch(Dispatchers.IO) {
             getCgvMoreMovieListUseCase.invoke().collectLatest {
                 when (it) {
@@ -114,7 +118,7 @@ class CgvViewModel @Inject constructor(
 
                             _cgvMovieList.emit(Resource.Success(sortedMovieList, UiStatus.SUCCESS))
                         } else {
-                            _cgvMovieList.emit(Resource.Error("CgvViewModel, fetchCgvMoreMovieList, cgvMoreMovieItemList isNullOrEmpty", UiStatus.ERROR))
+                            _cgvMovieList.emit(Resource.Error("CgvViewModel, getCgvMoreMovieList, cgvMoreMovieItemList isNullOrEmpty", UiStatus.ERROR))
                         }
                     }
 

@@ -5,10 +5,12 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kr.co.helicopark.movienoti.domain.model.PersonalReservationMovie
+import kr.co.helicopark.movienoti.domain.model.RemoteConfigVersion
 import kr.co.helicopark.movienoti.domain.model.Resource
 import kr.co.helicopark.movienoti.domain.model.UiStatus
 import javax.inject.Inject
@@ -18,6 +20,7 @@ import javax.inject.Named
 class AppRepositoryImpl @Inject constructor(
     private val firebaseAuthTask: Task<AuthResult>,
     private val firebaseTokenTask: Task<String>,
+    private val firebaseRemoteConfig: FirebaseRemoteConfig,
     @Named("Admin") private val adminReservationMovieRef: CollectionReference,
     @Named("Personal") private val personalReservationMovieRef: CollectionReference
 ) : AppRepository {
@@ -136,10 +139,10 @@ class AppRepositoryImpl @Inject constructor(
                     it
                 }
 
-                if (!filteredPersonalReservationMovieList.isNullOrEmpty()) {
+                if (filteredPersonalReservationMovieList != null) {
                     trySend(Resource.Success(filteredPersonalReservationMovieList, UiStatus.SUCCESS))
                 } else {
-                    trySend(Resource.Error("empty", UiStatus.ERROR))
+                    trySend(Resource.Error("예약 영화 불러오기를 실패했어요", UiStatus.ERROR))
                 }
             }.addOnFailureListener {
                 trySend(Resource.Error(it.message, UiStatus.ERROR))
@@ -197,6 +200,22 @@ class AppRepositoryImpl @Inject constructor(
                 }
         } catch (e: Exception) {
             trySend(Resource.Error(e.message, UiStatus.ERROR))
+        }
+
+        awaitClose { channel.close() }
+    }
+
+    override fun getRemoteConfigVersion(): Flow<Resource<RemoteConfigVersion>> = callbackFlow {
+        trySend(Resource.Loading(UiStatus.LOADING))
+        firebaseRemoteConfig.fetchAndActivate().addOnSuccessListener {
+            val versionCode: Long = firebaseRemoteConfig.getLong("versionCode")
+            val versionName: String = firebaseRemoteConfig.getString("versionName")
+
+            trySend(Resource.Success(RemoteConfigVersion(versionCode, versionName), UiStatus.SUCCESS))
+        }.addOnFailureListener {
+            trySend(Resource.Error("fetchAndActivate Fail", UiStatus.ERROR))
+        }.addOnCanceledListener {
+            trySend(Resource.Error("fetchAndActivate Cancel", UiStatus.ERROR))
         }
 
         awaitClose { channel.close() }

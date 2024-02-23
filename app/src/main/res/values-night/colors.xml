@@ -5,6 +5,8 @@
     <color name="colorAccent">@color/text_color</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#FF4081</color>
+    <color name="blue">#2196F3</color>
 
     <color name="cgv_main_color">#fb4358</color>
     <color name="cgv_sub_color">#ff7356</color>

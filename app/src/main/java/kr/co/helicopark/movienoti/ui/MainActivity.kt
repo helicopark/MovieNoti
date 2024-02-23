@@ -26,23 +26,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { isGranted: Boolean ->
-        if (!isGranted) {
-            androidx.appcompat.app.AlertDialog.Builder(this).apply {
-                setCancelable(false)
-                setTitle(R.string.dialog_default_title)
-                setMessage(R.string.dialog_reject_post_notification_message)
-                setPositiveButton(R.string.dialog_setting) { dialogInterface, _ ->
-                    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${packageName}")))
-                    dialogInterface.dismiss()
-                }
-                setNegativeButton(R.string.dialog_cancel) { _, _ -> }
-            }.show()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -50,7 +33,6 @@ class MainActivity : AppCompatActivity() {
 
         initNavigationBar()
         createChannel()
-        requestNotificationPermission()
 
         viewModel.checkUserInfo()
 
@@ -73,24 +55,6 @@ class MainActivity : AppCompatActivity() {
                     NotificationManager.IMPORTANCE_HIGH,
                 ),
             )
-        }
-    }
-
-    private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) !=
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                androidx.appcompat.app.AlertDialog.Builder(this).apply {
-                    setCancelable(false)
-                    setTitle(R.string.dialog_default_title)
-                    setMessage(R.string.dialog_post_notification_message)
-                    setPositiveButton(R.string.dialog_ok) { dialogInterface, _ ->
-                        requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-                        dialogInterface.dismiss()
-                    }.show()
-                }
-            }
         }
     }
 

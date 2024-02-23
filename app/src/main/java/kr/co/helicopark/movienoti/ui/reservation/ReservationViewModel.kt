@@ -1,5 +1,6 @@
 package kr.co.helicopark.movienoti.ui.reservation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,20 +36,35 @@ class ReservationViewModel @Inject constructor(
         }
     }
 
-    fun deleteReservationMovie(authUid: String, date: Long) {
+    fun deleteReservationMovie( date: Long) {
         viewModelScope.launch {
+            val authUid = readFirebaseAuthUseCase.invoke()
+
             deleteAdminReservationMovieUseCase.invoke(authUid + date).collectLatest {
                 when (it) {
                     is Resource.Success -> {
-                        deletePersonalReservationMovieUseCase.invoke(authUid, date)
+                        deletePersonalReservationMovieUseCase.invoke(authUid, date).collectLatest {
+                            when (it) {
+                                is Resource.Success -> {
+                                    initReservationMovieList()
+                                }
+
+                                is Resource.Loading -> {
+                                }
+
+                                is Resource.Error -> {
+                                }
+                            }
+
+                        }
                     }
 
                     is Resource.Loading -> {
-
+                        Log.e(ReservationViewModel::class.java.simpleName, "deletePersonalReservationMovieUseCase: ${it}")
                     }
 
                     is Resource.Error -> {
-
+                        Log.e(ReservationViewModel::class.java.simpleName, "deletePersonalReservationMovieUseCase: ${it}")
                     }
                 }
             }

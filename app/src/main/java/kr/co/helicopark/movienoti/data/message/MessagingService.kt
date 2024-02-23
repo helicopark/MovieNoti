@@ -18,6 +18,7 @@ class MessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         // 토큰 갱신, 현재 예약 중인 영화 토큰 변경
+
         Log.e(MessagingService::class.java.simpleName, "onNewToken: $token")
     }
 
@@ -42,7 +43,7 @@ class MessagingService : FirebaseMessagingService() {
         val channelId = getString(R.string.movie_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(messageBody)
             .setAutoCancel(true)

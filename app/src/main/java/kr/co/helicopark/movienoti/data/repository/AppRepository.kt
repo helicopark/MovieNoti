@@ -2,6 +2,7 @@ package kr.co.helicopark.movienoti.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kr.co.helicopark.movienoti.domain.model.PersonalReservationMovie
+import kr.co.helicopark.movienoti.domain.model.RemoteConfigVersion
 import kr.co.helicopark.movienoti.domain.model.Resource
 
 interface AppRepository {
@@ -18,4 +19,7 @@ interface AppRepository {
     // 영화 예약 삭제
     fun deleteAdminReservationMovieList(primaryKey: String): Flow<Resource<String>>
     fun deletePersonalReservationMovieList(authUid: String, date: Long): Flow<Resource<String>>
+
+    // 최신 버전 가져오기
+    fun getRemoteConfigVersion(): Flow<Resource<RemoteConfigVersion>>
 }

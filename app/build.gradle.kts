@@ -33,7 +33,7 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -105,7 +105,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.9.0")
 
     // 웹페이지 크롤링
-    implementation ("org.jsoup:jsoup:1.13.1")
+    implementation("org.jsoup:jsoup:1.13.1")
 
     // navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
@@ -117,6 +117,7 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-config")
 
     //Hilt
     implementation("com.google.dagger:hilt-android:2.48.1")

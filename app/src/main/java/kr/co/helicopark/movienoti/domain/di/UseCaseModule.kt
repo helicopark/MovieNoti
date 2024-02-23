@@ -18,6 +18,8 @@ import kr.co.helicopark.movienoti.domain.usecase.GetFirebaseTokenUseCase
 import kr.co.helicopark.movienoti.domain.usecase.GetFirebaseTokenUseCaseImpl
 import kr.co.helicopark.movienoti.domain.usecase.GetPersonalReservationMovieListUseCase
 import kr.co.helicopark.movienoti.domain.usecase.GetPersonalReservationMovieListUseCaseImpl
+import kr.co.helicopark.movienoti.domain.usecase.GetRemoteConfigVersionUseCase
+import kr.co.helicopark.movienoti.domain.usecase.GetRemoteConfigVersionUseCaseImpl
 import kr.co.helicopark.movienoti.domain.usecase.ReadPreferenceAuthUidUseCase
 import kr.co.helicopark.movienoti.domain.usecase.ReadPreferenceAuthUidUseCaseImpl
 import kr.co.helicopark.movienoti.domain.usecase.ReadPreferenceTokenUseCase
@@ -60,6 +62,9 @@ interface UseCaseModule {
 
     @Binds
     fun bindRemovePersonalReservationMovieUseCase(removePersonalReservationMovieUseCase: DeletePersonalReservationMovieUseCaseImpl): DeletePersonalReservationMovieUseCase
+
+    @Binds
+    fun bindGetRemoteConfigVersionUseCase(getRemoteConfigVersionUseCase: GetRemoteConfigVersionUseCaseImpl): GetRemoteConfigVersionUseCase
 
     @Binds
     fun bindReadAuthUidPreferenceUseCase(readAuthUidPreferenceUseCase: ReadPreferenceAuthUidUseCaseImpl): ReadPreferenceAuthUidUseCase

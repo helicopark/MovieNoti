@@ -11,12 +11,15 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kr.co.helicopark.movienoti.ADMIN_RESERVATION_MOVIE_LIST
+import kr.co.helicopark.movienoti.BuildConfig
 import kr.co.helicopark.movienoti.PERSONAL_RESERVATION_MOVIE_LIST
 import kr.co.helicopark.movienoti.data.repository.AppRepository
 import kr.co.helicopark.movienoti.data.repository.AppRepositoryImpl
@@ -61,15 +64,47 @@ object AppModule {
         Firebase.firestore
             .collection(PERSONAL_RESERVATION_MOVIE_LIST)
 
+    /**
+     * 버전 정보 가져오기
+     */
+    @Singleton
+    @Provides
+    fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig {
+        val firebaseRemoteConfig: FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+
+        if (BuildConfig.IS_DEBUG) {
+            firebaseRemoteConfig.setConfigSettingsAsync(
+                FirebaseRemoteConfigSettings.Builder()
+                    .setMinimumFetchIntervalInSeconds(0)
+                    .build()
+            )
+        } else {
+            firebaseRemoteConfig.setConfigSettingsAsync(
+                FirebaseRemoteConfigSettings.Builder()
+                    .setMinimumFetchIntervalInSeconds(3600)
+                    .build()
+            )
+        }
+
+        val defaultMap = HashMap<String, Any>()
+        defaultMap["versionCode"] = BuildConfig.VERSION_CODE.toString()
+        defaultMap["versionName"] = BuildConfig.VERSION_NAME
+
+        firebaseRemoteConfig.setDefaultsAsync(defaultMap)
+
+        return firebaseRemoteConfig
+    }
+
     @Singleton
     @Provides
     fun provideMovieRepository(
         firebaseAuthTask: Task<AuthResult>,
         firebaseMessagingTokenTask: Task<String>,
+        firebaseRemoteConfig: FirebaseRemoteConfig,
         @Named("Admin") adminReservationMovieRef: CollectionReference,
         @Named("Personal") personalReservationMovieRef: CollectionReference
     ): AppRepository {
-        return AppRepositoryImpl(firebaseAuthTask, firebaseMessagingTokenTask, adminReservationMovieRef, personalReservationMovieRef)
+        return AppRepositoryImpl(firebaseAuthTask, firebaseMessagingTokenTask, firebaseRemoteConfig, adminReservationMovieRef, personalReservationMovieRef)
     }
 
     /* DataStore */

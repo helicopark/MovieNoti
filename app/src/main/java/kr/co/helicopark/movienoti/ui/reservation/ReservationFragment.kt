@@ -8,13 +8,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DefaultItemAnimator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kr.co.helicopark.movienoti.R
 import kr.co.helicopark.movienoti.databinding.FragmentReservationBinding
-import kr.co.helicopark.movienoti.domain.model.UiStatus
+import kr.co.helicopark.movienoti.ui.getTheaterName
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @AndroidEntryPoint
 class ReservationFragment : Fragment() {
@@ -24,16 +24,28 @@ class ReservationFragment : Fragment() {
     private val adapter: ReservationAdapter by lazy {
         ReservationAdapter {
             AlertDialog.Builder(requireContext()).apply {
-                setPositiveButton(R.string.dialog_ok) { _, _ ->
+                val formattedDate = SimpleDateFormat("yy년 MM월 dd일", Locale.getDefault()).format(it.reservationDate)
+
+                setTitle(R.string.dialog_reservation_title)
+                setMessage(
+                    String.format(
+                        getString(R.string.dialog_reservation_message_edit_format),
+                        getTheaterName(it.areaCode, it.theaterCode),
+                        it.movieName,
+                        it.movieFormat,
+                        formattedDate
+                    )
+                )
+                setPositiveButton(R.string.dialog_edit) { _, _ ->
 
                 }
 
-                setNegativeButton(R.string.dialog_cancel) { _, _ ->
-
+                setNegativeButton(R.string.dialog_cancel) { dialogInteface, _ ->
+                    dialogInteface.dismiss()
                 }
 
                 setNeutralButton(R.string.dialog_delete) { _, _ ->
-
+                    viewModel.deleteReservationMovie(it.date)
                 }
             }.show()
         }
