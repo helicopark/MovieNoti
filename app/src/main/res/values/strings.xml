@@ -52,6 +52,8 @@
     <!--brand(cgv) theater 영화관에 movieTitle movieFormat 영화가 24년 2월 19일에 올라오면 알림을 받아요.-->
     <string name="dialog_reservation_message_edit_format">%s 영화관에 %s %s 영화가 %s에 올라오면 알림을 받아요.  </string>
 
+    <string name="dialog_reservation_delete_message">정말 %s 영화 오픈 알림을 삭제할까요?</string>
+
 
     <!--DatePicker-->
     <string name="date_picker_format_title">%s 영화를 선택했어요. 날짜를 선택해주세요.</string>

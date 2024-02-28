@@ -28,10 +28,14 @@ import kr.co.helicopark.movienoti.domain.usecase.SaveAuthUidPreferenceUseCase
 import kr.co.helicopark.movienoti.domain.usecase.SaveAuthUidPreferenceUseCaseImpl
 import kr.co.helicopark.movienoti.domain.usecase.SaveTokenPreferenceUseCase
 import kr.co.helicopark.movienoti.domain.usecase.SaveTokenPreferenceUseCaseImpl
-import kr.co.helicopark.movienoti.domain.usecase.SetAdminReservationMovieListUseCase
-import kr.co.helicopark.movienoti.domain.usecase.SetAdminReservationMovieListUseCaseImpl
-import kr.co.helicopark.movienoti.domain.usecase.SetPersonalReservationMovieListUseCase
-import kr.co.helicopark.movienoti.domain.usecase.SetPersonalReservationMovieListUseCaseImpl
+import kr.co.helicopark.movienoti.domain.usecase.SetAdminReservationMovieUseCase
+import kr.co.helicopark.movienoti.domain.usecase.SetAdminReservationMovieUseCaseImpl
+import kr.co.helicopark.movienoti.domain.usecase.SetPersonalReservationMovieUseCase
+import kr.co.helicopark.movienoti.domain.usecase.SetPersonalReservationMovieUseCaseImpl
+import kr.co.helicopark.movienoti.domain.usecase.UpdateAdminReservationMovieUseCase
+import kr.co.helicopark.movienoti.domain.usecase.UpdateAdminReservationMovieUseCaseImpl
+import kr.co.helicopark.movienoti.domain.usecase.UpdatePersonalReservationMovieUseCase
+import kr.co.helicopark.movienoti.domain.usecase.UpdatePersonalReservationMovieUseCaseImpl
 
 @Module
 @InstallIn(ViewModelComponent::class)
@@ -49,13 +53,13 @@ interface UseCaseModule {
     fun bindGetCgvMoreMovieListUseCase(getCgvMoreMovieListUseCase: GetCgvMoreMovieListUseCaseImpl): GetCgvMoreMovieListUseCase
 
     @Binds
-    fun bindSetAdminReservationMovieListUseCase(setAdminReservationMovieListUseCase: SetAdminReservationMovieListUseCaseImpl): SetAdminReservationMovieListUseCase
+    fun bindSetAdminReservationMovieListUseCase(setAdminReservationMovieListUseCase: SetAdminReservationMovieUseCaseImpl): SetAdminReservationMovieUseCase
 
     @Binds
     fun bindGetPersonalReservationMovieListUseCase(getPersonalReservationMovieListUseCase: GetPersonalReservationMovieListUseCaseImpl): GetPersonalReservationMovieListUseCase
 
     @Binds
-    fun bindSetPersonalReservationMovieListUseCase(setPersonalReservationMovieListUseCase: SetPersonalReservationMovieListUseCaseImpl): SetPersonalReservationMovieListUseCase
+    fun bindSetPersonalReservationMovieListUseCase(setPersonalReservationMovieListUseCase: SetPersonalReservationMovieUseCaseImpl): SetPersonalReservationMovieUseCase
 
     @Binds
     fun bindRemoveAdminReservationMovieUseCase(removeAdminReservationMovieUseCase: DeleteAdminReservationMovieUseCaseImpl): DeleteAdminReservationMovieUseCase
@@ -77,5 +81,11 @@ interface UseCaseModule {
 
     @Binds
     fun bindSaveTokenPreferenceUseCase(saveTokenPreferenceUseCase: SaveTokenPreferenceUseCaseImpl): SaveTokenPreferenceUseCase
+
+    @Binds
+    fun bindUpdateAdminReservationMovieUseCase(updateAdminReservationMovieUseCase: UpdateAdminReservationMovieUseCaseImpl): UpdateAdminReservationMovieUseCase
+
+    @Binds
+    fun bindUpdatePersonalReservationMovieUseCase(updatePersonalReservationMovieUseCase: UpdatePersonalReservationMovieUseCaseImpl): UpdatePersonalReservationMovieUseCase
 }
 

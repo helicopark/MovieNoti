@@ -9,33 +9,25 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView.OnCloseListener
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.google.android.material.datepicker.CalendarConstraints
-import com.google.android.material.datepicker.CalendarConstraints.DateValidator
-import com.google.android.material.datepicker.CompositeDateValidator
-import com.google.android.material.datepicker.DateValidatorPointBackward
-import com.google.android.material.datepicker.DateValidatorPointForward
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import kr.co.helicopark.movienoti.R
 import kr.co.helicopark.movienoti.databinding.FragmentCgvBinding
-import kr.co.helicopark.movienoti.ui.cgv.bottom.MovieBottomFragment
-import java.util.Calendar
+import kr.co.helicopark.movienoti.ui.bottom.MovieBottomFragment
+import kr.co.helicopark.movienoti.ui.datePicker
+import kr.co.helicopark.movienoti.ui.model.CgvMovieItem
 
 
 @AndroidEntryPoint
 class CgvFragment : Fragment() {
     private lateinit var binding: FragmentCgvBinding
     private val viewModel: CgvViewModel by viewModels()
+
+    private var selectedMovieItem: CgvMovieItem = CgvMovieItem("", "", "", "")
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -54,30 +46,21 @@ class CgvFragment : Fragment() {
                 }
             }.show()
         } else {
-
+            showDatePicker(selectedMovieItem)
         }
     }
 
     private val adapter by lazy {
-        CgvAdapter { movieListItem ->
+        CgvAdapter { movieItem ->
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                showDatePicker(movieListItem.title) { reservationDate ->
-                    MovieBottomFragment().let { fragment ->
-                        Bundle().let {
-                            it.putString("movieTitle", movieListItem.title)
-                            it.putLong("reservationDate", reservationDate)
-                            it.putString("thumb", movieListItem.thumb)
-                            fragment.arguments = it
-                        }
-
-                        fragment.show(requireActivity().supportFragmentManager, "MovieBottomFragment")
-                    }
-                }
+                showDatePicker(movieItem)
             } else {
+                selectedMovieItem = movieItem
+
                 androidx.appcompat.app.AlertDialog.Builder(requireContext()).apply {
                     setCancelable(false)
                     setTitle(R.string.dialog_default_title)
@@ -134,36 +117,6 @@ class CgvFragment : Fragment() {
         }
     }
 
-    private fun showDatePicker(movieTitle: String, onPositiveButtonClickListener: MaterialPickerOnPositiveButtonClickListener<in Long>) {
-        val datePickerBuilder = MaterialDatePicker.Builder.datePicker()
-        datePickerBuilder.setTitleText(movieTitle)
-        datePickerBuilder.setCalendarConstraints(calendarConstraints())
-
-        val datePicker = datePickerBuilder.build()
-        datePicker.addOnPositiveButtonClickListener(onPositiveButtonClickListener)
-        datePicker.show(requireActivity().supportFragmentManager, datePicker.toString())
-    }
-
-    private fun calendarConstraints(): CalendarConstraints {
-        val constraintsBuilderRange = CalendarConstraints.Builder()
-        val calendarStart: Calendar = Calendar.getInstance()
-        val calendarEnd: Calendar = Calendar.getInstance()
-        calendarStart.add(Calendar.DATE, -1)
-        calendarEnd.add(Calendar.MONTH, 1)
-
-        constraintsBuilderRange.setStart(calendarStart.timeInMillis)
-        constraintsBuilderRange.setEnd(calendarEnd.timeInMillis)
-
-        val listValidators = ArrayList<DateValidator>()
-        listValidators.add(DateValidatorPointForward.from(calendarStart.timeInMillis))
-        listValidators.add(DateValidatorPointBackward.before(calendarEnd.timeInMillis))
-        val validators = CompositeDateValidator.allOf(listValidators)
-
-        constraintsBuilderRange.setValidator(validators)
-
-        return constraintsBuilderRange.build()
-    }
-
     private fun startSettingAppForNotificationPermission() {
         val notificationSettingIntent = Intent()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -178,5 +131,23 @@ class CgvFragment : Fragment() {
         }
 
         startActivity(notificationSettingIntent)
+    }
+
+    private fun showDatePicker(movieItem: CgvMovieItem) {
+        datePicker(movieItem.title).apply {
+            addOnPositiveButtonClickListener { reservationDate ->
+                MovieBottomFragment().let { fragment ->
+                    Bundle().let {
+                        it.putString("movieTitle", movieItem.title)
+                        it.putLong("reservationDate", reservationDate)
+                        it.putString("thumb", movieItem.thumb)
+                        it.putBoolean("isUpdate", false)
+                        fragment.arguments = it
+                    }
+
+                    fragment.show(requireActivity().supportFragmentManager, "MovieBottomFragment")
+                }
+            }
+        }.show(requireActivity().supportFragmentManager, "datePicker")
     }
 }

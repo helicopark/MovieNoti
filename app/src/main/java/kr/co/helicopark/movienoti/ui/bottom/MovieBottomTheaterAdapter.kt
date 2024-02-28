@@ -1,4 +1,4 @@
-package kr.co.helicopark.movienoti.ui.cgv.bottom
+package kr.co.helicopark.movienoti.ui.bottom
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

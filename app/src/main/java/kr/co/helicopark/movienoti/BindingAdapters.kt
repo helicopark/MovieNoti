@@ -57,7 +57,7 @@ fun bindProgress(view: ProgressBar, resource: Resource<List<Any>>) {
 }
 
 @BindingAdapter("isBold")
-fun setBold(view: TextView, isBold: Boolean) {
+fun setBold(view: TextView, isBold: Boolean) {10
     if (isBold) {
         view.setTypeface(null, Typeface.BOLD)
     } else {

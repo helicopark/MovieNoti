@@ -1,8 +1,9 @@
-package kr.co.helicopark.movienoti.ui.cgv.bottom
+package kr.co.helicopark.movienoti.ui.bottom
 
 import android.app.Dialog
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,10 +42,9 @@ import kr.co.helicopark.movienoti.R
 import kr.co.helicopark.movienoti.SEOUL_CODE
 import kr.co.helicopark.movienoti.SEOUL_THEATER_LIST
 import kr.co.helicopark.movienoti.databinding.DialogBottomMovieTheaterBinding
+import kr.co.helicopark.movienoti.domain.model.PersonalReservationMovie
 import kr.co.helicopark.movienoti.domain.model.UiStatus
-import kr.co.helicopark.movienoti.ui.model.AdminReservationMovieItem
 import kr.co.helicopark.movienoti.ui.model.AreaItem
-import kr.co.helicopark.movienoti.ui.model.PersonalReservationMovieItem
 import kr.co.helicopark.movienoti.ui.model.TheaterItem
 import org.json.JSONArray
 import java.text.SimpleDateFormat
@@ -64,13 +64,15 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
     private var theaterCode = ""
     private var thumb = ""
 
+    private var isUpdate = false
+
     private val movieBottomAreaAdapter: MovieBottomAreaAdapter by lazy {
-        MovieBottomAreaAdapter {
-            areaCode = it
+        MovieBottomAreaAdapter { selectedAreaCode ->
+            areaCode = selectedAreaCode
 
-            movieBottomAreaAdapter.submitList(loadAreaItem(it))
+            movieBottomAreaAdapter.submitList(loadAreaItem(selectedAreaCode))
 
-            when (it) {
+            when (selectedAreaCode) {
                 SEOUL_CODE -> movieBottomTheaterAdapter.submitList(loadTheaterItem(SEOUL_THEATER_LIST))
                 GYEONGGI_CODE -> movieBottomTheaterAdapter.submitList(loadTheaterItem(GYEONGGI_THEATER_LIST))
                 INCHON_CODE -> movieBottomTheaterAdapter.submitList(loadTheaterItem(INCHON_THEATER_LIST))
@@ -85,12 +87,12 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
     }
 
     private val movieBottomTheaterAdapter: MovieBottomTheaterAdapter by lazy {
-        MovieBottomTheaterAdapter { item ->
+        MovieBottomTheaterAdapter { theaterItem ->
 //            viewModel.setTheaterCode(it)
-            theaterCode = item.code
+            theaterCode = theaterItem.code
 
             AlertDialog.Builder(requireContext()).apply {
-                setTitle(getString(R.string.dialog_movie_info_title, item.name))
+                setTitle(getString(R.string.dialog_movie_info_title, theaterItem.name))
 
                 val movieInfoJsonArray = JSONArray(MOVIE_INFO)
                 val movieInfoItems: Array<CharSequence> = Array(movieInfoJsonArray.length()) {
@@ -105,20 +107,30 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
                     dialogInterface.dismiss()
                     dismiss()
                     lifecycleScope.launch {
-                        date = Date().time
+                        if (isUpdate) {
+                            viewModel.updateAdminReservationMovie(date, reservationDate, "CGV", movieTitle, movieFormat, areaCode, theaterCode)
+                            viewModel.updatePersonalReservationMovieList(
+                                date,
+                                PersonalReservationMovie(date, reservationDate, "CGV", movieTitle, movieFormat, areaCode, theaterCode, thumb)
+                            )
+                        } else {
+                            val currentTime = Date().time
+                            val personalReservationMovieInfo = hashMapOf(
+                                currentTime.toString() to PersonalReservationMovie(
+                                    currentTime,
+                                    reservationDate,
+                                    "CGV",
+                                    movieTitle,
+                                    movieFormat,
+                                    areaCode,
+                                    theaterCode,
+                                    thumb
+                                )
+                            )
 
-                        AlertDialog.Builder(requireContext()).apply {
-                            setMessage("name = ${movieTitle}, info = ${movieFormat}, date = ${date}, theater = ${theaterCode},area = ${areaCode}")
-                            setPositiveButton("확인", null)
-                            show()
+                            viewModel.setAdminReservationMovie(currentTime, reservationDate, "CGV", movieTitle, movieFormat, areaCode, theaterCode)
+                            viewModel.setPersonalReservationMovieList(personalReservationMovieInfo)
                         }
-
-                        viewModel.setAdminReservationMovie(date, reservationDate, "CGV", movieTitle, movieFormat, theaterCode, areaCode)
-
-                        val personalReservationMovieInfo = hashMapOf(
-                            date.toString() to PersonalReservationMovieItem(date, reservationDate, "CGV", movieTitle, movieFormat, areaCode, theaterCode, thumb)
-                        )
-                        viewModel.setPersonalReservationMovieList(personalReservationMovieInfo)
                     }
                 }
 
@@ -139,9 +151,12 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
 
         initAdapterSetting()
 
+        date = arguments?.getLong("date") ?: 0L
         movieTitle = arguments?.getString("movieTitle") ?: ""
         reservationDate = arguments?.getLong("reservationDate") ?: 0L
         thumb = arguments?.getString("thumb") ?: ""
+
+        isUpdate = arguments?.getBoolean("isUpdate") ?: false
 
         val formattedDate = SimpleDateFormat("yy년 MM월 dd일", Locale.getDefault()).format(reservationDate)
 
@@ -158,7 +173,7 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
             viewModel.setPersonalReservationMovieState.collectLatest {
                 when (it.state) {
                     UiStatus.LOADING -> {
-
+                        Log.e(MovieBottomFragment::class.java.simpleName, "LOADING: ", )
                     }
 
                     UiStatus.SUCCESS -> {
@@ -166,11 +181,11 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
                     }
 
                     UiStatus.ERROR -> {
-
+                        Log.e(MovieBottomFragment::class.java.simpleName, "ERROR: ", )
                     }
 
                     else -> {
-
+                        Log.e(MovieBottomFragment::class.java.simpleName, "ERROR: ", )
                     }
                 }
             }
@@ -178,7 +193,7 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
             viewModel.setAdminReservationMovieState.collectLatest {
                 when (it.state) {
                     UiStatus.LOADING -> {
-
+                        Log.e(MovieBottomFragment::class.java.simpleName, "LOADING: ", )
                     }
 
                     UiStatus.SUCCESS -> {
@@ -186,7 +201,7 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
                     }
 
                     UiStatus.ERROR -> {
-
+                        Log.e(MovieBottomFragment::class.java.simpleName, "ERROR: ", )
                     }
 
                     else -> {

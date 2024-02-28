@@ -9,7 +9,6 @@ import com.bumptech.glide.Glide
 import kr.co.helicopark.movienoti.databinding.ItemReservationListBinding
 import kr.co.helicopark.movienoti.domain.model.PersonalReservationMovie
 import kr.co.helicopark.movienoti.ui.getTheaterName
-import kr.co.helicopark.movienoti.ui.model.PersonalReservationMovieItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -29,7 +28,7 @@ class ReservationAdapter(private val onItemClickListener:(personalReservation:Pe
                 onItemClickListener.invoke(getItem(adapterPosition))
             }
 
-            binding.tvReservationListItemTitle.text = getItem(adapterPosition).movieName
+            binding.tvReservationListItemTitle.text = getItem(adapterPosition).movieTitle
             binding.tvReservationListItemDate.text = SimpleDateFormat("yy.MM.dd", Locale.getDefault()).format(Date(getItem(adapterPosition).reservationDate))
             binding.tvReservationListItemTheater.text = getTheaterName(getItem(adapterPosition).areaCode, getItem(adapterPosition).theaterCode)
             binding.tvReservationListItemFormat.text = getItem(adapterPosition).movieFormat

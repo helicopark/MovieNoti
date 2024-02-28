@@ -12,6 +12,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kr.co.helicopark.movienoti.R
 import kr.co.helicopark.movienoti.databinding.FragmentReservationBinding
+import kr.co.helicopark.movienoti.ui.bottom.MovieBottomFragment
+import kr.co.helicopark.movienoti.ui.datePicker
 import kr.co.helicopark.movienoti.ui.getTheaterName
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -22,30 +24,56 @@ class ReservationFragment : Fragment() {
     private val viewModel: ReservationViewModel by viewModels()
 
     private val adapter: ReservationAdapter by lazy {
-        ReservationAdapter {
+        ReservationAdapter { personalReservationMovie ->
             AlertDialog.Builder(requireContext()).apply {
-                val formattedDate = SimpleDateFormat("yy년 MM월 dd일", Locale.getDefault()).format(it.reservationDate)
+                val formattedDate = SimpleDateFormat("yy년 MM월 dd일", Locale.getDefault()).format(personalReservationMovie.reservationDate)
 
                 setTitle(R.string.dialog_reservation_title)
                 setMessage(
                     String.format(
                         getString(R.string.dialog_reservation_message_edit_format),
-                        getTheaterName(it.areaCode, it.theaterCode),
-                        it.movieName,
-                        it.movieFormat,
+                        getTheaterName(personalReservationMovie.areaCode, personalReservationMovie.theaterCode),
+                        personalReservationMovie.movieTitle,
+                        personalReservationMovie.movieFormat,
                         formattedDate
                     )
                 )
-                setPositiveButton(R.string.dialog_edit) { _, _ ->
 
+                setPositiveButton(R.string.dialog_edit) { _, _ ->
+                    datePicker(personalReservationMovie.movieTitle).apply {
+                        addOnPositiveButtonClickListener { reservationDate ->
+                            MovieBottomFragment().let { fragment ->
+                                Bundle().let {
+                                    it.putLong("date", personalReservationMovie.date)
+                                    it.putString("movieTitle", personalReservationMovie.movieTitle)
+                                    it.putLong("reservationDate", reservationDate)
+                                    it.putString("thumb", personalReservationMovie.thumb)
+                                    it.putBoolean("isUpdate", true)
+                                    fragment.arguments = it
+                                }
+
+                                fragment.show(requireActivity().supportFragmentManager, "MovieBottomFragment")
+                            }
+                        }
+                    }.show(requireActivity().supportFragmentManager, "datePicker")
                 }
 
-                setNegativeButton(R.string.dialog_cancel) { dialogInteface, _ ->
-                    dialogInteface.dismiss()
+                setNegativeButton(R.string.dialog_cancel) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
                 }
 
                 setNeutralButton(R.string.dialog_delete) { _, _ ->
-                    viewModel.deleteReservationMovie(it.date)
+                    AlertDialog.Builder(requireContext()).apply {
+                        setTitle(R.string.dialog_reservation_title)
+                        setMessage(String.format(getString(R.string.dialog_reservation_delete_message), personalReservationMovie.movieTitle))
+                        setPositiveButton(R.string.dialog_delete) { _, _ ->
+                            viewModel.deleteReservationMovie(personalReservationMovie.date)
+                        }
+                        setNegativeButton(R.string.dialog_cancel) { dialogInterface, _ ->
+                            dialogInterface.dismiss()
+                        }
+                        show()
+                    }
                 }
             }.show()
         }

@@ -9,6 +9,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kr.co.helicopark.movienoti.domain.model.AdminReservationMovie
 import kr.co.helicopark.movienoti.domain.model.PersonalReservationMovie
 import kr.co.helicopark.movienoti.domain.model.RemoteConfigVersion
 import kr.co.helicopark.movienoti.domain.model.Resource
@@ -67,10 +68,8 @@ class AppRepositoryImpl @Inject constructor(
     /**
      * primaryKey: authUid + date
      */
-    override fun setAdminReservationMovieList(primaryKey: String, adminReservationMovieItem: Any): Flow<Resource<String>> = callbackFlow {
+    override fun setAdminReservationMovie(primaryKey: String, adminReservationMovieItem: Any): Flow<Resource<String>> = callbackFlow {
         try {
-            trySend(Resource.Loading(UiStatus.LOADING))
-
             adminReservationMovieRef.document(primaryKey).set(adminReservationMovieItem)
                 .addOnSuccessListener { documentReference ->
                     trySend(Resource.Success("DocumentSnapshot added with ID: $documentReference", UiStatus.SUCCESS))
@@ -90,8 +89,6 @@ class AppRepositoryImpl @Inject constructor(
 
     override fun setPersonalReservationMovie(authUid: String, personalReservationMovieItem: Any): Flow<Resource<String>> = callbackFlow {
         try {
-            trySend(Resource.Loading(UiStatus.LOADING))
-
             personalReservationMovieRef.document(authUid).set(personalReservationMovieItem, SetOptions.merge())
                 .addOnSuccessListener { documentReference ->
                     trySend(Resource.Success("DocumentSnapshot added with ID: $documentReference", UiStatus.SUCCESS))
@@ -106,7 +103,9 @@ class AppRepositoryImpl @Inject constructor(
             trySend(Resource.Error(e.message, UiStatus.ERROR))
         }
 
-        awaitClose { channel.close() }
+        awaitClose {
+            channel.close()
+        }
     }
 
     override fun getPersonalReservationMovieList(authUid: String): Flow<Resource<List<PersonalReservationMovie>>> = callbackFlow {
@@ -118,20 +117,20 @@ class AppRepositoryImpl @Inject constructor(
                     val date = (documentSnapshot.data?.get(it.key) as HashMap<*, *>)["date"]?.toString()?.toLong() ?: 0L
                     val reservationDate = (documentSnapshot.data?.get(it.key) as HashMap<*, *>)["reservationDate"]?.toString()?.toLong() ?: 0L
                     val brand = (documentSnapshot.data?.get(it.key) as HashMap<*, *>)["brand"]?.toString() ?: ""
-                    val movieName = (documentSnapshot.data?.get(it.key) as HashMap<*, *>)["movieName"]?.toString() ?: ""
+                    val movieTitle = (documentSnapshot.data?.get(it.key) as HashMap<*, *>)["movieTitle"]?.toString() ?: ""
                     val movieFormat = (documentSnapshot.data?.get(it.key) as HashMap<*, *>)["movieFormat"]?.toString() ?: ""
                     val areaCode = (documentSnapshot.data?.get(it.key) as HashMap<*, *>)["areaCode"]?.toString() ?: ""
                     val theaterCode = (documentSnapshot.data?.get(it.key) as HashMap<*, *>)["theaterCode"]?.toString() ?: ""
                     val thumb = (documentSnapshot.data?.get(it.key) as HashMap<*, *>)["thumb"]?.toString() ?: ""
 
-                    PersonalReservationMovie(date, reservationDate, brand, movieName, movieFormat, areaCode, theaterCode, thumb)
+                    PersonalReservationMovie(date, reservationDate, brand, movieTitle, movieFormat, areaCode, theaterCode, thumb)
                 }
 
                 val filteredPersonalReservationMovieList = personalReservationMovieList?.filter {
                     it.date > 0L
                             && it.reservationDate > 0L
                             && it.brand.isNotEmpty()
-                            && it.movieName.isNotEmpty()
+                            && it.movieTitle.isNotEmpty()
                             && it.movieFormat.isNotEmpty()
                             && it.areaCode.isNotEmpty()
                             && it.theaterCode.isNotEmpty()
@@ -156,10 +155,56 @@ class AppRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun updateAdminReservationMovie(primaryKey: String, adminReservationMovie: AdminReservationMovie): Flow<Resource<String>> = callbackFlow {
+        try {
+            trySend(Resource.Loading(UiStatus.LOADING))
+
+            adminReservationMovieRef.document(primaryKey).delete()
+                .addOnSuccessListener {
+                    trySend(Resource.Success("DocumentSnapshot successfully deleted!", UiStatus.SUCCESS))
+                }
+                .addOnFailureListener { e ->
+                    trySend(Resource.Error(e.message, UiStatus.ERROR))
+                }
+                .addOnCanceledListener {
+                    trySend(Resource.Error("예약 영화 수정을 취소했어요", UiStatus.ERROR))
+                }
+        } catch (e: Exception) {
+            trySend(Resource.Error(e.message, UiStatus.ERROR))
+        }
+
+        awaitClose { channel.close() }
+    }
+
+    override fun updatePersonalReservationMovie(authUid: String, date: Long, personalReservationMovie: PersonalReservationMovie): Flow<Resource<String>> = callbackFlow {
+        try {
+            trySend(Resource.Loading(UiStatus.LOADING))
+
+            val updates = hashMapOf<String, Any>(
+                date.toString() to personalReservationMovie,
+            )
+
+            personalReservationMovieRef.document(authUid).update(updates)
+                .addOnSuccessListener {
+                    trySend(Resource.Success("DocumentSnapshot successfully updated", UiStatus.SUCCESS))
+                }
+                .addOnFailureListener { e ->
+                    trySend(Resource.Error(e.message, UiStatus.ERROR))
+                }
+                .addOnCanceledListener {
+                    trySend(Resource.Error("영화 예약 수정을 취소했어요.", UiStatus.ERROR))
+                }
+        } catch (e: Exception) {
+            trySend(Resource.Error(e.message, UiStatus.ERROR))
+        }
+
+        awaitClose { channel.close() }
+    }
+
     /**
      * primaryKey: authUid+date
      */
-    override fun deleteAdminReservationMovieList(primaryKey: String): Flow<Resource<String>> = callbackFlow {
+    override fun deleteAdminReservationMovie(primaryKey: String): Flow<Resource<String>> = callbackFlow {
         try {
             trySend(Resource.Loading(UiStatus.LOADING))
 
@@ -180,7 +225,7 @@ class AppRepositoryImpl @Inject constructor(
         awaitClose { channel.close() }
     }
 
-    override fun deletePersonalReservationMovieList(authUid: String, date: Long): Flow<Resource<String>> = callbackFlow {
+    override fun deletePersonalReservationMovie(authUid: String, date: Long): Flow<Resource<String>> = callbackFlow {
         try {
             trySend(Resource.Loading(UiStatus.LOADING))
 
