@@ -34,7 +34,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:queryBackground="@null"
-            app:queryHint="검색어를 입력하시오" />
+            app:queryHint="@string/search_hint" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_list_order"

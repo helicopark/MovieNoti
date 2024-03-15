@@ -7,7 +7,7 @@ import java.util.stream.Stream
 
 
 // Auth
-const val NO_ID = ""
+const val NO_ID = "NO_ID"
 
 // Firestore
 const val PERSONAL_RESERVATION_MOVIE_LIST = "personalReservationMovieList"
@@ -42,10 +42,15 @@ const val GYEONGSANG_THEATER_LIST =
 const val GWANGJU_JEOLLA_JEJU_THEATER_LIST =
     "[{\"theaterCode\":\"0220\",\"theaterName\":\"CGV광양\"},{\"theaterCode\":\"0221\",\"theaterName\":\"CGV광양 엘에프스퀘어\"},{\"theaterCode\":\"0295\",\"theaterName\":\"CGV광주금남로\"},{\"theaterCode\":\"0193\",\"theaterName\":\"CGV광주상무\"},{\"theaterCode\":\"0210\",\"theaterName\":\"CGV광주용봉\"},{\"theaterCode\":\"0218\",\"theaterName\":\"CGV광주첨단\"},{\"theaterCode\":\"0244\",\"theaterName\":\"CGV광주충장로\"},{\"theaterCode\":\"0090\",\"theaterName\":\"CGV광주터미널\"},{\"theaterCode\":\"0215\",\"theaterName\":\"CGV광주하남\"},{\"theaterCode\":\"0237\",\"theaterName\":\"CGV나주\"},{\"theaterCode\":\"0289\",\"theaterName\":\"CGV목포\"},{\"theaterCode\":\"0280\",\"theaterName\":\"CGV목포평화광장\"},{\"theaterCode\":\"0225\",\"theaterName\":\"CGV서전주\"},{\"theaterCode\":\"0114\",\"theaterName\":\"CGV순천\"},{\"theaterCode\":\"0268\",\"theaterName\":\"CGV순천신대\"},{\"theaterCode\":\"0315\",\"theaterName\":\"CGV여수웅천\"},{\"theaterCode\":\"0020\",\"theaterName\":\"CGV익산\"},{\"theaterCode\":\"0213\",\"theaterName\":\"CGV전주고사\"},{\"theaterCode\":\"0336\",\"theaterName\":\"CGV전주에코시티\"},{\"theaterCode\":\"0179\",\"theaterName\":\"CGV전주효자\"},{\"theaterCode\":\"0186\",\"theaterName\":\"CGV정읍\"},{\"theaterCode\":\"0302\",\"theaterName\":\"CGV제주\"},{\"theaterCode\":\"0259\",\"theaterName\":\"CGV제주노형\"}]"
 
-const val THEATER_LIST = "{\"01\":${SEOUL_THEATER_LIST}, \"02\":${GYEONGGI_THEATER_LIST}, \"03\":${INCHON_THEATER_LIST}, \"04\":${GANGWON_THEATER_LIST}, \"05\":${DAEJEON_CHUNGCHEONG_THEATER_LIST}, \"06\":${DAEGU_THEATER_LIST}, \"07\":${BUSAN_ULSAN_THEATER_LIST}, \"08\":${GYEONGSANG_THEATER_LIST}, \"09\":${GWANGJU_JEOLLA_JEJU_THEATER_LIST}}"
+const val THEATER_LIST =
+    "{\"01\":${SEOUL_THEATER_LIST}, \"02\":${GYEONGGI_THEATER_LIST}, \"03\":${INCHON_THEATER_LIST}, \"04\":${GANGWON_THEATER_LIST}, \"05\":${DAEJEON_CHUNGCHEONG_THEATER_LIST}, \"06\":${DAEGU_THEATER_LIST}, \"07\":${BUSAN_ULSAN_THEATER_LIST}, \"08\":${GYEONGSANG_THEATER_LIST}, \"09\":${GWANGJU_JEOLLA_JEJU_THEATER_LIST}}"
 
-const val MOVIE_INFO =
-    "[{\"movieInfo\":\"전체\"}, {\"movieInfo\":\"2D\"}, {\"movieInfo\":\"4DX\"}, {\"movieInfo\":\"IMAX\"}, {\"movieInfo\":\"얼터너티브\"}]"
+const val MOVIE_FORMAT =
+    "[{\"movieFormat\":\"전체\"}" +
+            ", {\"movieFormat\":\"2D\"}" +
+//            ", {\"movieFormat\":\"4DX\"}" +
+//            ", {\"movieFormat\":\"얼터너티브\"}" +
+            ", {\"movieFormat\":\"IMAX\"}]"
 
 const val SEOUL_CODE = "01"                     // 서울
 const val GYEONGGI_CODE = "02"                  // 경기

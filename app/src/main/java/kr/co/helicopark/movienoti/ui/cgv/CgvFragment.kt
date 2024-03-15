@@ -10,13 +10,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kr.co.helicopark.movienoti.R
 import kr.co.helicopark.movienoti.databinding.FragmentCgvBinding
+import kr.co.helicopark.movienoti.domain.model.UiStatus
 import kr.co.helicopark.movienoti.ui.bottom.MovieBottomFragment
 import kr.co.helicopark.movienoti.ui.datePicker
 import kr.co.helicopark.movienoti.ui.model.CgvMovieItem
@@ -33,7 +38,7 @@ class CgvFragment : Fragment() {
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         if (!isGranted) {
-            androidx.appcompat.app.AlertDialog.Builder(requireContext()).apply {
+            AlertDialog.Builder(requireContext()).apply {
                 setCancelable(false)
                 setTitle(R.string.dialog_default_title)
                 setMessage(R.string.dialog_reject_post_notification_message)
@@ -61,7 +66,7 @@ class CgvFragment : Fragment() {
             } else {
                 selectedMovieItem = movieItem
 
-                androidx.appcompat.app.AlertDialog.Builder(requireContext()).apply {
+                AlertDialog.Builder(requireContext()).apply {
                     setCancelable(false)
                     setTitle(R.string.dialog_default_title)
                     setMessage(R.string.dialog_post_notification_message)
@@ -115,6 +120,27 @@ class CgvFragment : Fragment() {
             viewModel.initCgvMovieList(viewModel.cgvOrder.value)
             return@setOnCloseListener false
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.cgvMovieList.collectLatest {
+                if (it.state == UiStatus.ERROR) {
+                    AlertDialog.Builder(requireContext()).apply {
+                        setTitle(R.string.dialog_default_title)
+                        setMessage(it.message)
+                        setCancelable(false)
+                        setPositiveButton(R.string.dialog_retry) { dialogInterface, _ ->
+                            viewModel.initCgvMovieList(viewModel.cgvOrder.value)
+                            dialogInterface.dismiss()
+                        }
+                        setNegativeButton(R.string.dialog_finish) { dialogInterface, _ ->
+                            dialogInterface.dismiss()
+                            requireActivity().finishAffinity()
+                        }
+                    }.show()
+
+                }
+            }
+        }
     }
 
     private fun startSettingAppForNotificationPermission() {
@@ -136,7 +162,7 @@ class CgvFragment : Fragment() {
     private fun showDatePicker(movieItem: CgvMovieItem) {
         datePicker(movieItem.title).apply {
             addOnPositiveButtonClickListener { reservationDate ->
-                MovieBottomFragment().let { fragment ->
+                MovieBottomFragment(null).let { fragment ->
                     Bundle().let {
                         it.putString("movieTitle", movieItem.title)
                         it.putLong("reservationDate", reservationDate)

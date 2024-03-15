@@ -1,4 +1,4 @@
-package kr.co.helicopark.movienoti.data.message
+package kr.co.helicopark.movienoti.data.fcm
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -7,32 +7,36 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import kr.co.helicopark.movienoti.ui.MainActivity
 import kr.co.helicopark.movienoti.R
+import kr.co.helicopark.movienoti.ui.MainActivity
 
 class MessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         // 토큰 갱신, 현재 예약 중인 영화 토큰 변경
-
-        Log.e(MessagingService::class.java.simpleName, "onNewToken: $token")
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        if (message.notification?.body == null) {
-            sendNotification(message.notification?.body!!)
-        } else {
-            sendNotification("body: null")
-        }
+        sendNotification(message.data)
     }
 
-    private fun sendNotification(messageBody: String) {
+    private fun sendNotification(message: Map<String, String>) {
         val intent = Intent(this, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+        intent.putExtra("text", message["text"])
+        intent.putExtra("brand", message["brand"])
+//        areaCode
+//        movieFormat
+//        reservationDate
+//        text
+//        brand
+//        theaterCode
+//        movieTitle
+
         val pendingIntent = PendingIntent.getActivity(
             this,
             System.currentTimeMillis().toInt(),
@@ -40,12 +44,13 @@ class MessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_IMMUTABLE,
         )
 
-        val channelId = getString(R.string.movie_channel_id)
+        val channelId = message["channel_id"] ?: getString(R.string.movie_channel_id)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.icon_notification)
             .setContentTitle(getString(R.string.app_name))
-            .setContentText(messageBody)
+            .setContentText(message["text"])
+            .setSubText(message["subText"])
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
             .setContentIntent(pendingIntent)

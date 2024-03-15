@@ -8,6 +8,6 @@ import javax.inject.Inject
 
 // Firebase firestore 에 개인 영화 예약 수정하기
 class UpdatePersonalReservationMovieUseCaseImpl @Inject constructor(private val appRepository: AppRepository) : UpdatePersonalReservationMovieUseCase {
-    override fun invoke(authUid: String, date: Long, personalReservationMovie: PersonalReservationMovie): Flow<Resource<String>> =
-        appRepository.updatePersonalReservationMovie(authUid, date, personalReservationMovie)
+    override fun invoke(authUid: String, personalReservationMovie: PersonalReservationMovie): Flow<Resource<String>> =
+        appRepository.updatePersonalReservationMovie(authUid, personalReservationMovie)
 }

@@ -1,24 +1,21 @@
 package kr.co.helicopark.movienoti.ui.bottom
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kr.co.helicopark.movienoti.domain.model.AdminReservationMovie
 import kr.co.helicopark.movienoti.domain.model.PersonalReservationMovie
 import kr.co.helicopark.movienoti.domain.model.Resource
-import kr.co.helicopark.movienoti.domain.model.UiStatus
 import kr.co.helicopark.movienoti.domain.usecase.ReadPreferenceAuthUidUseCase
 import kr.co.helicopark.movienoti.domain.usecase.ReadPreferenceTokenUseCase
 import kr.co.helicopark.movienoti.domain.usecase.SetAdminReservationMovieUseCase
 import kr.co.helicopark.movienoti.domain.usecase.SetPersonalReservationMovieUseCase
 import kr.co.helicopark.movienoti.domain.usecase.UpdateAdminReservationMovieUseCase
 import kr.co.helicopark.movienoti.domain.usecase.UpdatePersonalReservationMovieUseCase
-import kr.co.helicopark.movienoti.ui.cgv.CgvOrder
-import kr.co.helicopark.movienoti.ui.model.CgvMovieItem
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,77 +27,71 @@ class MovieBottomViewModel @Inject constructor(
     private val updateAdminReservationMovieUseCase: UpdateAdminReservationMovieUseCase,
     private val updatePersonalReservationMovieUseCase: UpdatePersonalReservationMovieUseCase
 ) : ViewModel() {
-    private val _setAdminReservationMovieState: MutableStateFlow<Resource<String>> = MutableStateFlow(Resource.Loading(UiStatus.LOADING))
-    val setAdminReservationMovieState: StateFlow<Resource<String>> = _setAdminReservationMovieState
+    private val _setAdminReservationMovieState: MutableSharedFlow<Resource<String>> = MutableSharedFlow()
+    val setAdminReservationMovieState: SharedFlow<Resource<String>> = _setAdminReservationMovieState
 
-    private val _setPersonalReservationMovieState: MutableStateFlow<Resource<String>> = MutableStateFlow(Resource.Loading(UiStatus.LOADING))
-    val setPersonalReservationMovieState: StateFlow<Resource<String>> = _setPersonalReservationMovieState
+    private val _updateAdminReservationMovieState: MutableSharedFlow<Resource<String>> = MutableSharedFlow()
+    val updateAdminReservationMovieState: SharedFlow<Resource<String>> = _updateAdminReservationMovieState
 
     fun setAdminReservationMovie(
+        coroutineScope: CoroutineScope,
         date: Long,
         reservationDate: Long,
         brand: String,
         movieTitle: String,
         movieFormat: String,
         areaCode: String,
-        theaterCode: String
+        theaterCode: String,
+        thumb: String
     ) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             val primaryKey = readPreferenceAuthUidUseCase.invoke() + date
             val token = readPreferenceTokenUseCase.invoke()
-            val item = AdminReservationMovie(date, reservationDate, brand, movieTitle, movieFormat, theaterCode, areaCode, token)
+            val adminReservationMovie = AdminReservationMovie(date, reservationDate, brand, movieTitle, movieFormat, areaCode, theaterCode, token)
 
-            setAdminReservationMovieUseCase.invoke(primaryKey, item).collect {
+            setAdminReservationMovieUseCase.invoke(primaryKey, adminReservationMovie).collect {
                 _setAdminReservationMovieState.emit(it)
             }
         }
-    }
 
-    fun setPersonalReservationMovieList(personalReservationMovieItem: Any) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             val authUid = readPreferenceAuthUidUseCase.invoke()
 
-            setPersonalReservationMovieUseCase.invoke(authUid, personalReservationMovieItem).collect {
-                when (it) {
-                    is Resource.Loading -> {
-                        _setPersonalReservationMovieState.emit(it)
-                    }
-
-                    is Resource.Success -> {
-                        _setPersonalReservationMovieState.emit(it)
-                    }
-
-                    is Resource.Error -> {
-                        _setPersonalReservationMovieState.emit(it)
-                    }
-                }
-            }
+            setPersonalReservationMovieUseCase.invoke(
+                authUid,
+                PersonalReservationMovie(date, reservationDate, brand, movieTitle, movieFormat, areaCode, theaterCode, thumb)
+            ).collect()
         }
     }
 
     fun updateAdminReservationMovie(
+        coroutineScope: CoroutineScope,
         date: Long,
         reservationDate: Long,
         brand: String,
         movieTitle: String,
         movieFormat: String,
         areaCode: String,
-        theaterCode: String
+        theaterCode: String,
+        thumb: String
     ) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             val primaryKey = readPreferenceAuthUidUseCase.invoke() + date
             val token = readPreferenceTokenUseCase.invoke()
-            val item = AdminReservationMovie(date, reservationDate, brand, movieTitle, movieFormat, theaterCode, areaCode, token)
+            val adminReservationMovie = AdminReservationMovie(date, reservationDate, brand, movieTitle, movieFormat, areaCode, theaterCode, token)
 
-            updateAdminReservationMovieUseCase.invoke(primaryKey, item)
+            updateAdminReservationMovieUseCase.invoke(primaryKey, adminReservationMovie).collect {
+                _updateAdminReservationMovieState.emit(it)
+            }
         }
-    }
 
-    fun updatePersonalReservationMovieList(date: Long, personalReservationMovie: PersonalReservationMovie) {
-        viewModelScope.launch {
+        coroutineScope.launch {
             val authUid = readPreferenceAuthUidUseCase.invoke()
 
-            updatePersonalReservationMovieUseCase.invoke(authUid, date, personalReservationMovie)
+            updatePersonalReservationMovieUseCase.invoke(
+                authUid,
+                PersonalReservationMovie(date, reservationDate, brand, movieTitle, movieFormat, areaCode, theaterCode, thumb)
+            ).collect()
         }
     }
 }

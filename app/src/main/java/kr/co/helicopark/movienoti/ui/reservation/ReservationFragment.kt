@@ -27,14 +27,19 @@ class ReservationFragment : Fragment() {
         ReservationAdapter { personalReservationMovie ->
             AlertDialog.Builder(requireContext()).apply {
                 val formattedDate = SimpleDateFormat("yy년 MM월 dd일", Locale.getDefault()).format(personalReservationMovie.reservationDate)
+                val movieFormat = if (personalReservationMovie.movieFormat == "IMAX") {
+                    "IMAX "
+                } else {
+                    ""
+                }
 
                 setTitle(R.string.dialog_reservation_title)
                 setMessage(
                     String.format(
                         getString(R.string.dialog_reservation_message_edit_format),
                         getTheaterName(personalReservationMovie.areaCode, personalReservationMovie.theaterCode),
+                        movieFormat,
                         personalReservationMovie.movieTitle,
-                        personalReservationMovie.movieFormat,
                         formattedDate
                     )
                 )
@@ -42,7 +47,11 @@ class ReservationFragment : Fragment() {
                 setPositiveButton(R.string.dialog_edit) { _, _ ->
                     datePicker(personalReservationMovie.movieTitle).apply {
                         addOnPositiveButtonClickListener { reservationDate ->
-                            MovieBottomFragment().let { fragment ->
+                            MovieBottomFragment { isSuccess ->
+                                if (isSuccess) {
+                                    viewModel.initReservationMovieList()
+                                }
+                            }.let { fragment ->
                                 Bundle().let {
                                     it.putLong("date", personalReservationMovie.date)
                                     it.putString("movieTitle", personalReservationMovie.movieTitle)
@@ -58,7 +67,7 @@ class ReservationFragment : Fragment() {
                     }.show(requireActivity().supportFragmentManager, "datePicker")
                 }
 
-                setNegativeButton(R.string.dialog_cancel) { dialogInterface, _ ->
+                setNegativeButton(R.string.dialog_close) { dialogInterface, _ ->
                     dialogInterface.dismiss()
                 }
 

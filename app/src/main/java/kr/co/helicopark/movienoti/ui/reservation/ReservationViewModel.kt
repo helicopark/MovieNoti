@@ -1,10 +1,11 @@
 package kr.co.helicopark.movienoti.ui.reservation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,6 +28,9 @@ class ReservationViewModel @Inject constructor(
     private val _reservationList: MutableStateFlow<Resource<List<PersonalReservationMovie>>> = MutableStateFlow(Resource.Loading(UiStatus.LOADING))
     val reservationList: StateFlow<Resource<List<PersonalReservationMovie>>> = _reservationList
 
+    private val _deleteResult: MutableSharedFlow<Resource<String>> = MutableSharedFlow()
+    val deleteResult: SharedFlow<Resource<String>> = _deleteResult
+
     fun initReservationMovieList() {
         viewModelScope.launch {
             val authUid = readFirebaseAuthUseCase.invoke()
@@ -36,7 +40,7 @@ class ReservationViewModel @Inject constructor(
         }
     }
 
-    fun deleteReservationMovie( date: Long) {
+    fun deleteReservationMovie(date: Long) {
         viewModelScope.launch {
             val authUid = readFirebaseAuthUseCase.invoke()
 
@@ -56,15 +60,12 @@ class ReservationViewModel @Inject constructor(
                                 }
                             }
 
+                            _deleteResult.emit(it)
                         }
                     }
 
-                    is Resource.Loading -> {
-                        Log.e(ReservationViewModel::class.java.simpleName, "deletePersonalReservationMovieUseCase: ${it}")
-                    }
-
-                    is Resource.Error -> {
-                        Log.e(ReservationViewModel::class.java.simpleName, "deletePersonalReservationMovieUseCase: ${it}")
+                    else -> {
+                        _deleteResult.emit(it)
                     }
                 }
             }

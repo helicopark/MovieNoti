@@ -13,6 +13,7 @@
     <string name="format_released_date"><![CDATA[<B>%s 개봉 <I>%s</I></B>]]></string>
     <string name="cgv_reservation_rate_order">· 예매율순</string>
     <string name="cgv_abc_order">· 가나다순</string>
+    <string name="search_hint">영화 이름을 검색해주세요.</string>
 
     <!--ReservationFragment-->
     <string name="reservation_title">예약 영화 목록</string>
@@ -22,7 +23,7 @@
     <!--SettingFragment-->
     <string name="setting_title">설정</string>
     <string name="setting_notification_title">알림 설정</string>
-    <string name="setting_notification_content">영화 오픈 예매 알림을 설정해요. 무비노티는 광고성 푸시가 없으니 영화 오픈 예매 알림을 받으시고 싶으시면 알림 설정을 해주세요.</string>
+    <string name="setting_notification_content">영화 오픈 알림을 설정해요. 무비노티는 광고성 푸시가 없으니 영화 오픈 알림을 받으시고 싶으시면 알림 설정을 해주세요.</string>
 
     <string name="setting_review_title">리뷰 쓰러 가기</string>
     <string name="setting_review_content">무비노티에 대한 느낀점을 리뷰로 적어주시면 힘이 돼요!</string>
@@ -39,28 +40,37 @@
     <!--AlertDialog-->
     <string name="dialog_default_title">알림</string>
     <string name="dialog_ok">확인</string>
-    <string name="dialog_edit">수정</string>
     <string name="dialog_cancel">취소</string>
+    <string name="dialog_close">닫기</string>
+    <string name="dialog_finish">종료</string>
+    <string name="dialog_retry">재시도</string>
+    <string name="dialog_edit">수정</string>
     <string name="dialog_delete">삭제</string>
     <string name="dialog_setting">설정 화면</string>
-    <string name="dialog_post_notification_message">영화 예매 오픈은 알림을 통해서 알려드려요. 알림을 받기 위해서 알림 권한이 필요해요.</string>
-    <string name="dialog_reject_post_notification_message">영화 예매 오픈 알림을 받기 원하시면 설정화면에서 알림 권한을 허용해주세요.</string>
+    <string name="dialog_update">업데이트</string>
+
+    <string name="dialog_loading_message">서버에 등록 중이에요. 잠시만 기다려주세요.</string>
+
+    <string name="dialog_post_notification_message">영화 오픈은 알림을 통해서 알려드려요. 알림을 받기 위해서 알림 권한이 필요해요.</string>
+    <string name="dialog_reject_post_notification_message">영화 오픈 알림을 받기 원하시면 설정화면에서 알림 권한을 허용해주세요.</string>
 
     <string name="dialog_movie_info_title">%s 영화관을 선택했어요. 영화 종류를 선택해주세요.</string>
 
-    <string name="dialog_reservation_title">영화 예매 오픈 알림</string>
+    <string name="dialog_reservation_title">영화 오픈 알림</string>
     <!--brand(cgv) theater 영화관에 movieTitle movieFormat 영화가 24년 2월 19일에 올라오면 알림을 받아요.-->
-    <string name="dialog_reservation_message_edit_format">%s 영화관에 %s %s 영화가 %s에 올라오면 알림을 받아요.  </string>
+    <string name="dialog_reservation_message_edit_format">%s 영화관에 %s%s 영화가 %s에 올라오면 알림을 받아요.  </string>
 
     <string name="dialog_reservation_delete_message">정말 %s 영화 오픈 알림을 삭제할까요?</string>
 
+    <string name="dialog_update_forced_message">필수로 추가해야하는 업데이트 내용이 있어요. 번거로우시겠지만 업데이트를 부탁드릴게요.</string>
+    <string name="dialog_update_optional_message">새로운 업데이트 내용이 있어요. 업데이트를 하시겠어요?</string>
 
     <!--DatePicker-->
     <string name="date_picker_format_title">%s 영화를 선택했어요. 날짜를 선택해주세요.</string>
 
     <!--TheaterBottomSheetDialogFragment-->
     <!--    와 %s 일자를 선택했어요.-->
-    <string name="bottom_sheet_format_title"><![CDATA[<b>%s</b>에 <b>%s</b>]]> 영화 예매 오픈 알림을 설정해요. 영화관을 선택해주세요.</string>
+    <string name="bottom_sheet_format_title"><![CDATA[<b>%s</b>에 <b>%s</b>]]> 영화 오픈 알림을 설정해요. 영화관을 선택해주세요.</string>
 
     <string name="seoul">서울</string>
     <string name="gyeonggi">경기</string>

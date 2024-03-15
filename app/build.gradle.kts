@@ -4,10 +4,11 @@ import java.io.FileInputStream
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-parcelize")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 
@@ -41,7 +42,8 @@ android {
     buildTypes {
         release {
             isDebuggable = false
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             buildConfigField("Boolean", "IS_DEBUG", "false")
             signingConfig = signingConfigs.getByName("release")
@@ -50,6 +52,7 @@ android {
         debug {
             isDebuggable = true
             isMinifyEnabled = false
+            isShrinkResources = false
             buildConfigField("Boolean", "IS_DEBUG", "true")
         }
     }
@@ -104,6 +107,8 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.google.code.gson:gson:2.9.0")
 
+    implementation("com.jakewharton.timber:timber:4.7.1")
+
     // 웹페이지 크롤링
     implementation("org.jsoup:jsoup:1.13.1")
 
@@ -114,6 +119,7 @@ dependencies {
     // firebase
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")

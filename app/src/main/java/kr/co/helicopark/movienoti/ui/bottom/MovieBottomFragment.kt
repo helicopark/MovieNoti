@@ -3,7 +3,6 @@ package kr.co.helicopark.movienoti.ui.bottom
 import android.app.Dialog
 import android.os.Bundle
 import android.text.Html
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,13 +36,13 @@ import kr.co.helicopark.movienoti.GYEONGSANG_CODE
 import kr.co.helicopark.movienoti.GYEONGSANG_THEATER_LIST
 import kr.co.helicopark.movienoti.INCHON_CODE
 import kr.co.helicopark.movienoti.INCHON_THEATER_LIST
-import kr.co.helicopark.movienoti.MOVIE_INFO
+import kr.co.helicopark.movienoti.MOVIE_FORMAT
 import kr.co.helicopark.movienoti.R
 import kr.co.helicopark.movienoti.SEOUL_CODE
 import kr.co.helicopark.movienoti.SEOUL_THEATER_LIST
 import kr.co.helicopark.movienoti.databinding.DialogBottomMovieTheaterBinding
-import kr.co.helicopark.movienoti.domain.model.PersonalReservationMovie
-import kr.co.helicopark.movienoti.domain.model.UiStatus
+import kr.co.helicopark.movienoti.domain.model.Resource
+import kr.co.helicopark.movienoti.ui.getTheaterName
 import kr.co.helicopark.movienoti.ui.model.AreaItem
 import kr.co.helicopark.movienoti.ui.model.TheaterItem
 import org.json.JSONArray
@@ -52,7 +51,7 @@ import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
-class MovieBottomFragment : BottomSheetDialogFragment() {
+class MovieBottomFragment(private val onUpdateListener: ((isSuccess: Boolean) -> Unit)?) : BottomSheetDialogFragment() {
     private lateinit var binding: DialogBottomMovieTheaterBinding
     private val viewModel: MovieBottomViewModel by viewModels()
 
@@ -65,6 +64,18 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
     private var thumb = ""
 
     private var isUpdate = false
+
+    private val loadingDialog by lazy {
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle(R.string.dialog_default_title)
+            setMessage(R.string.dialog_loading_message)
+            setCancelable(false)
+            setPositiveButton(R.string.dialog_close) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                dismiss()
+            }
+        }.create()
+    }
 
     private val movieBottomAreaAdapter: MovieBottomAreaAdapter by lazy {
         MovieBottomAreaAdapter { selectedAreaCode ->
@@ -94,42 +105,43 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
             AlertDialog.Builder(requireContext()).apply {
                 setTitle(getString(R.string.dialog_movie_info_title, theaterItem.name))
 
-                val movieInfoJsonArray = JSONArray(MOVIE_INFO)
-                val movieInfoItems: Array<CharSequence> = Array(movieInfoJsonArray.length()) {
-                    movieInfoJsonArray.getJSONObject(it).getString("movieInfo")
+                val movieFormatJsonArray = JSONArray(MOVIE_FORMAT)
+                val movieFormatItems: Array<CharSequence> = Array(movieFormatJsonArray.length()) {
+                    movieFormatJsonArray.getJSONObject(it).getString("movieFormat")
                 }
-                movieFormat = movieInfoItems[0].toString()
-                setSingleChoiceItems(movieInfoItems, 0) { _, b ->
-                    movieFormat = movieInfoItems[b].toString()
+                movieFormat = movieFormatItems[0].toString()
+                setSingleChoiceItems(movieFormatItems, 0) { _, b ->
+                    movieFormat = movieFormatItems[b].toString()
                 }
 
                 setPositiveButton(R.string.dialog_ok) { dialogInterface, _ ->
                     dialogInterface.dismiss()
-                    dismiss()
                     lifecycleScope.launch {
                         if (isUpdate) {
-                            viewModel.updateAdminReservationMovie(date, reservationDate, "CGV", movieTitle, movieFormat, areaCode, theaterCode)
-                            viewModel.updatePersonalReservationMovieList(
+                            viewModel.updateAdminReservationMovie(
+                                viewLifecycleOwner.lifecycleScope,
                                 date,
-                                PersonalReservationMovie(date, reservationDate, "CGV", movieTitle, movieFormat, areaCode, theaterCode, thumb)
+                                reservationDate,
+                                "CGV",
+                                movieTitle,
+                                movieFormat,
+                                areaCode,
+                                theaterCode,
+                                thumb
                             )
                         } else {
                             val currentTime = Date().time
-                            val personalReservationMovieInfo = hashMapOf(
-                                currentTime.toString() to PersonalReservationMovie(
-                                    currentTime,
-                                    reservationDate,
-                                    "CGV",
-                                    movieTitle,
-                                    movieFormat,
-                                    areaCode,
-                                    theaterCode,
-                                    thumb
-                                )
+                            viewModel.setAdminReservationMovie(
+                                viewLifecycleOwner.lifecycleScope,
+                                currentTime,
+                                reservationDate,
+                                "CGV",
+                                movieTitle,
+                                movieFormat,
+                                areaCode,
+                                theaterCode,
+                                thumb
                             )
-
-                            viewModel.setAdminReservationMovie(currentTime, reservationDate, "CGV", movieTitle, movieFormat, areaCode, theaterCode)
-                            viewModel.setPersonalReservationMovieList(personalReservationMovieInfo)
                         }
                     }
                 }
@@ -170,42 +182,65 @@ class MovieBottomFragment : BottomSheetDialogFragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.setPersonalReservationMovieState.collectLatest {
-                when (it.state) {
-                    UiStatus.LOADING -> {
-                        Log.e(MovieBottomFragment::class.java.simpleName, "LOADING: ", )
-                    }
+            launch {
+                viewModel.setAdminReservationMovieState.collectLatest {
+                    when (it) {
+                        is Resource.Loading -> {
+                            loadingDialog.show()
+                        }
 
-                    UiStatus.SUCCESS -> {
-                        Toast.makeText(requireContext(), it.data, Toast.LENGTH_LONG).show()
-                    }
+                        is Resource.Success -> {
+                            if (loadingDialog.isShowing) {
+                                loadingDialog.dismiss()
+                            }
 
-                    UiStatus.ERROR -> {
-                        Log.e(MovieBottomFragment::class.java.simpleName, "ERROR: ", )
-                    }
+                            AlertDialog.Builder(requireContext()).apply {
+                                val message = "$movieTitle 영화가 ${formattedDate}에 ${getTheaterName(areaCode, theaterCode)} 영화관에 오픈되면 알림을 드릴게요. "
+                                setTitle(R.string.dialog_default_title)
+                                setMessage(message)
+                                setCancelable(false)
+                                setPositiveButton(R.string.dialog_ok) { dialogInterface, _ ->
+                                    dialogInterface.dismiss()
+                                    dismiss()
+                                }
+                            }.show()
+                        }
 
-                    else -> {
-                        Log.e(MovieBottomFragment::class.java.simpleName, "ERROR: ", )
+                        is Resource.Error -> {
+                            Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
 
-            viewModel.setAdminReservationMovieState.collectLatest {
-                when (it.state) {
-                    UiStatus.LOADING -> {
-                        Log.e(MovieBottomFragment::class.java.simpleName, "LOADING: ", )
-                    }
+            launch {
+                viewModel.updateAdminReservationMovieState.collect {
+                    when (it) {
+                        is Resource.Loading -> {
+                            loadingDialog.show()
+                        }
 
-                    UiStatus.SUCCESS -> {
-                        Toast.makeText(requireContext(), it.data, Toast.LENGTH_LONG).show()
-                    }
+                        is Resource.Success -> {
+                            if (loadingDialog.isShowing) {
+                                loadingDialog.dismiss()
+                            }
 
-                    UiStatus.ERROR -> {
-                        Log.e(MovieBottomFragment::class.java.simpleName, "ERROR: ", )
-                    }
+                            AlertDialog.Builder(requireContext()).apply {
+                                val message = "$movieTitle 영화가 ${formattedDate}에 ${getTheaterName(areaCode, theaterCode)} 영화관에 오픈되면 알림을 받는 것으로 수정했어요."
+                                setTitle(R.string.dialog_default_title)
+                                setMessage(message)
+                                setCancelable(false)
+                                setPositiveButton(R.string.dialog_ok) { dialogInterface, _ ->
+                                    onUpdateListener?.invoke(true)
+                                    dialogInterface.dismiss()
+                                    dismiss()
+                                }
+                            }.show()
+                        }
 
-                    else -> {
-
+                        is Resource.Error -> {
+                            Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
